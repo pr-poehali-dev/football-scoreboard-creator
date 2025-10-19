@@ -201,9 +201,58 @@ const initialMatches: Match[] = [
 ];
 
 const Index = () => {
-  const [teams] = useState<Team[]>(initialTeams);
-  const [matches] = useState<Match[]>(initialMatches);
+  const [teams, setTeams] = useState<Team[]>(initialTeams);
+  const [matches, setMatches] = useState<Match[]>(initialMatches);
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
+  const [editingTeam, setEditingTeam] = useState<Team | null>(null);
+  const [editingPlayer, setEditingPlayer] = useState<{teamId: string, player: Player} | null>(null);
+  const [editingMatch, setEditingMatch] = useState<Match | null>(null);
+  const [newTeamName, setNewTeamName] = useState('');
+  const [newPlayerName, setNewPlayerName] = useState('');
+  const [newPlayerPosition, setNewPlayerPosition] = useState('');
+
+  const updateTeamName = (teamId: string, newName: string) => {
+    setTeams(teams.map(t => t.id === teamId ? {...t, name: newName} : t));
+    setMatches(matches.map(m => ({
+      ...m,
+      homeTeam: m.homeTeam === teams.find(t => t.id === teamId)?.name ? newName : m.homeTeam,
+      awayTeam: m.awayTeam === teams.find(t => t.id === teamId)?.name ? newName : m.awayTeam
+    })));
+    setEditingTeam(null);
+  };
+
+  const updatePlayer = (teamId: string, playerId: string, updates: Partial<Player>) => {
+    setTeams(teams.map(t => 
+      t.id === teamId 
+        ? {...t, players: t.players.map(p => p.id === playerId ? {...p, ...updates} : p)}
+        : t
+    ));
+    setEditingPlayer(null);
+  };
+
+  const addPlayer = (teamId: string) => {
+    if (!newPlayerName || !newPlayerPosition) return;
+    const newPlayer: Player = {
+      id: Date.now().toString(),
+      name: newPlayerName,
+      position: newPlayerPosition,
+      goals: 0,
+      assists: 0,
+      matches: 0
+    };
+    setTeams(teams.map(t => 
+      t.id === teamId ? {...t, players: [...t.players, newPlayer]} : t
+    ));
+    setNewPlayerName('');
+    setNewPlayerPosition('');
+  };
+
+  const updateMatchScore = (matchId: string, homeScore: number, awayScore: number) => {
+    setMatches(matches.map(m => 
+      m.id === matchId ? {...m, homeScore, awayScore, status: 'finished' as const} : m
+    ));
+    setEditingMatch(null);
+  };
 
   const sortedTeams = [...teams].sort((a, b) => {
     if (b.points !== a.points) return b.points - a.points;
@@ -321,16 +370,17 @@ const Index = () => {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => setSelectedTeam(team)}
-                              >
-                                <Icon name="Info" size={16} />
-                              </Button>
-                            </DialogTrigger>
+                          <div className="flex gap-2">
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => setSelectedTeam(team)}
+                                >
+                                  <Icon name="Info" size={16} />
+                                </Button>
+                              </DialogTrigger>
                             <DialogContent>
                               <DialogHeader>
                                 <DialogTitle className="flex items-center gap-2">
@@ -371,7 +421,42 @@ const Index = () => {
                                 </div>
                               </div>
                             </DialogContent>
-                          </Dialog>
+                            </Dialog>
+                            <Dialog open={editingTeam?.id === team.id} onOpenChange={(open) => !open && setEditingTeam(null)}>
+                              <DialogTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => {
+                                    setEditingTeam(team);
+                                    setNewTeamName(team.name);
+                                  }}
+                                >
+                                  <Icon name="Pencil" size={16} />
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>Изменить название команды</DialogTitle>
+                                </DialogHeader>
+                                <div className="space-y-4 py-4">
+                                  <div className="space-y-2">
+                                    <Label>Название команды</Label>
+                                    <Input
+                                      value={newTeamName}
+                                      onChange={(e) => setNewTeamName(e.target.value)}
+                                    />
+                                  </div>
+                                  <Button
+                                    onClick={() => updateTeamName(team.id, newTeamName)}
+                                    className="w-full"
+                                  >
+                                    Сохранить
+                                  </Button>
+                                </div>
+                              </DialogContent>
+                            </Dialog>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -422,10 +507,154 @@ const Index = () => {
                             <TableCell className="text-center font-black text-primary">
                               {player.goals + player.assists}
                             </TableCell>
+                            <TableCell>
+                              <Dialog open={editingPlayer?.player.id === player.id} onOpenChange={(open) => !open && setEditingPlayer(null)}>
+                                <DialogTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => setEditingPlayer({teamId: team.id, player})}
+                                  >
+                                    <Icon name="Pencil" size={16} />
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                  <DialogHeader>
+                                    <DialogTitle>Редактировать игрока</DialogTitle>
+                                  </DialogHeader>
+                                  <div className="space-y-4 py-4">
+                                    <div className="space-y-2">
+                                      <Label>Имя игрока</Label>
+                                      <Input
+                                        defaultValue={player.name}
+                                        onChange={(e) => {
+                                          if (editingPlayer) {
+                                            setEditingPlayer({
+                                              ...editingPlayer,
+                                              player: {...editingPlayer.player, name: e.target.value}
+                                            });
+                                          }
+                                        }}
+                                      />
+                                    </div>
+                                    <div className="space-y-2">
+                                      <Label>Позиция</Label>
+                                      <Input
+                                        defaultValue={player.position}
+                                        onChange={(e) => {
+                                          if (editingPlayer) {
+                                            setEditingPlayer({
+                                              ...editingPlayer,
+                                              player: {...editingPlayer.player, position: e.target.value}
+                                            });
+                                          }
+                                        }}
+                                      />
+                                    </div>
+                                    <div className="grid grid-cols-3 gap-2">
+                                      <div className="space-y-2">
+                                        <Label>Голы</Label>
+                                        <Input
+                                          type="number"
+                                          defaultValue={player.goals}
+                                          onChange={(e) => {
+                                            if (editingPlayer) {
+                                              setEditingPlayer({
+                                                ...editingPlayer,
+                                                player: {...editingPlayer.player, goals: parseInt(e.target.value) || 0}
+                                              });
+                                            }
+                                          }}
+                                        />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label>Передачи</Label>
+                                        <Input
+                                          type="number"
+                                          defaultValue={player.assists}
+                                          onChange={(e) => {
+                                            if (editingPlayer) {
+                                              setEditingPlayer({
+                                                ...editingPlayer,
+                                                player: {...editingPlayer.player, assists: parseInt(e.target.value) || 0}
+                                              });
+                                            }
+                                          }}
+                                        />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label>Матчи</Label>
+                                        <Input
+                                          type="number"
+                                          defaultValue={player.matches}
+                                          onChange={(e) => {
+                                            if (editingPlayer) {
+                                              setEditingPlayer({
+                                                ...editingPlayer,
+                                                player: {...editingPlayer.player, matches: parseInt(e.target.value) || 0}
+                                              });
+                                            }
+                                          }}
+                                        />
+                                      </div>
+                                    </div>
+                                    <Button
+                                      onClick={() => {
+                                        if (editingPlayer) {
+                                          updatePlayer(editingPlayer.teamId, player.id, editingPlayer.player);
+                                        }
+                                      }}
+                                      className="w-full"
+                                    >
+                                      Сохранить
+                                    </Button>
+                                  </div>
+                                </DialogContent>
+                              </Dialog>
+                            </TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
                     </Table>
+                    <div className="mt-4 pt-4 border-t">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="outline" className="w-full">
+                            <Icon name="UserPlus" size={16} className="mr-2" />
+                            Добавить игрока
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Добавить игрока в {team.name}</DialogTitle>
+                          </DialogHeader>
+                          <div className="space-y-4 py-4">
+                            <div className="space-y-2">
+                              <Label>Имя игрока</Label>
+                              <Input
+                                value={newPlayerName}
+                                onChange={(e) => setNewPlayerName(e.target.value)}
+                                placeholder="Введите имя"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label>Позиция</Label>
+                              <Input
+                                value={newPlayerPosition}
+                                onChange={(e) => setNewPlayerPosition(e.target.value)}
+                                placeholder="Нападающий, Вратарь, и т.д."
+                              />
+                            </div>
+                            <Button
+                              onClick={() => addPlayer(team.id)}
+                              className="w-full"
+                            >
+                              Добавить
+                            </Button>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
                   </CardContent>
                 </Card>
               ))}
@@ -466,10 +695,56 @@ const Index = () => {
                           </div>
                         </div>
                       </div>
-                      <Button variant="outline" size="sm">
-                        <Icon name="Bell" size={16} className="mr-2" />
-                        Напомнить
-                      </Button>
+                      <Dialog open={editingMatch?.id === match.id} onOpenChange={(open) => !open && setEditingMatch(null)}>
+                        <DialogTrigger asChild>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => setEditingMatch(match)}
+                          >
+                            <Icon name="Edit" size={16} className="mr-2" />
+                            Внести результат
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Результат матча</DialogTitle>
+                          </DialogHeader>
+                          <div className="space-y-4 py-4">
+                            <div className="flex items-center gap-4">
+                              <div className="flex-1 space-y-2">
+                                <Label>{match.homeTeam}</Label>
+                                <Input
+                                  type="number"
+                                  min="0"
+                                  defaultValue={match.homeScore || 0}
+                                  id={`home-${match.id}`}
+                                />
+                              </div>
+                              <div className="text-2xl font-bold">:</div>
+                              <div className="flex-1 space-y-2">
+                                <Label>{match.awayTeam}</Label>
+                                <Input
+                                  type="number"
+                                  min="0"
+                                  defaultValue={match.awayScore || 0}
+                                  id={`away-${match.id}`}
+                                />
+                              </div>
+                            </div>
+                            <Button
+                              onClick={() => {
+                                const homeInput = document.getElementById(`home-${match.id}`) as HTMLInputElement;
+                                const awayInput = document.getElementById(`away-${match.id}`) as HTMLInputElement;
+                                updateMatchScore(match.id, parseInt(homeInput.value) || 0, parseInt(awayInput.value) || 0);
+                              }}
+                              className="w-full"
+                            >
+                              Сохранить результат
+                            </Button>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
                     </div>
                   ))}
                 </div>
