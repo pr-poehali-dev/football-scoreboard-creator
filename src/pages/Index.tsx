@@ -153,6 +153,21 @@ const Index = () => {
   const [newMatchAwayTeam, setNewMatchAwayTeam] = useState('');
   const [newMatchDate, setNewMatchDate] = useState('');
   const [isAddingMatch, setIsAddingMatch] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [password, setPassword] = useState('');
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
+
+  const adminPassword = 'admin123';
+
+  const handleAdminLogin = () => {
+    if (password === adminPassword) {
+      setIsAdmin(true);
+      setShowAdminLogin(false);
+      setPassword('');
+    } else {
+      alert('Неверный пароль!');
+    }
+  };
 
   const updateTeamName = (teamId: string, newName: string) => {
     setTeams(teams.map(t => t.id === teamId ? {...t, name: newName} : t));
@@ -248,6 +263,50 @@ const Index = () => {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(14,165,233,0.1),transparent_50%)]"></div>
       </div>
       <div className="container mx-auto px-4 py-8 relative z-10">
+        <div className="flex justify-end mb-4">
+          {!isAdmin ? (
+            <Dialog open={showAdminLogin} onOpenChange={setShowAdminLogin}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Icon name="Lock" size={16} className="mr-2" />
+                  Режим редактирования
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Вход в режим редактирования</DialogTitle>
+                  <DialogDescription>
+                    Введите пароль для доступа к редактированию
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <Label>Пароль</Label>
+                    <Input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && handleAdminLogin()}
+                      placeholder="Введите пароль"
+                    />
+                  </div>
+                  <Button onClick={handleAdminLogin} className="w-full">
+                    Войти
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsAdmin(false)}
+            >
+              <Icon name="LogOut" size={16} className="mr-2" />
+              Выйти из редактирования
+            </Button>
+          )}
+        </div>
         <div className="mb-8 relative overflow-hidden rounded-2xl animate-fade-in">
           <div className="relative h-64 bg-gradient-to-br from-primary via-accent to-primary">
             <img 
@@ -358,6 +417,7 @@ const Index = () => {
                         </TableCell>
                         <TableCell>
                           <div className="flex gap-2">
+                            {isAdmin && (
                             <Dialog>
                               <DialogTrigger asChild>
                                 <Button
@@ -409,6 +469,8 @@ const Index = () => {
                               </div>
                             </DialogContent>
                             </Dialog>
+                            )}
+                            {isAdmin && (
                             <Dialog open={editingTeam?.id === team.id} onOpenChange={(open) => !open && setEditingTeam(null)}>
                               <DialogTrigger asChild>
                                 <Button
@@ -525,6 +587,7 @@ const Index = () => {
                                 </div>
                               </DialogContent>
                             </Dialog>
+                            )}
                           </div>
                         </TableCell>
                       </TableRow>
@@ -576,6 +639,7 @@ const Index = () => {
                             <TableCell className="text-center font-black text-primary">
                               {player.goals + player.assists}
                             </TableCell>
+                            {isAdmin && (
                             <TableCell>
                               <Dialog open={editingPlayer?.player.id === player.id} onOpenChange={(open) => !open && setEditingPlayer(null)}>
                                 <DialogTrigger asChild>
@@ -681,10 +745,12 @@ const Index = () => {
                                 </DialogContent>
                               </Dialog>
                             </TableCell>
+                            )}
                           </TableRow>
                         ))}
                       </TableBody>
                     </Table>
+                    {isAdmin && (
                     <div className="mt-4 pt-4 border-t">
                       <Dialog>
                         <DialogTrigger asChild>
@@ -724,6 +790,7 @@ const Index = () => {
                         </DialogContent>
                       </Dialog>
                     </div>
+                    )}
                   </CardContent>
                 </Card>
               ))}
@@ -737,6 +804,7 @@ const Index = () => {
                   <Icon name="CalendarClock" size={24} className="text-accent" />
                   Предстоящие матчи
                 </CardTitle>
+                {isAdmin && (
                 <Dialog open={isAddingMatch} onOpenChange={setIsAddingMatch}>
                   <DialogTrigger asChild>
                     <Button variant="default">
@@ -797,6 +865,7 @@ const Index = () => {
                     </div>
                   </DialogContent>
                 </Dialog>
+                )}
               </CardHeader>
               <CardContent>
                 {upcomingMatches.length === 0 ? (
@@ -831,6 +900,7 @@ const Index = () => {
                           </div>
                         </div>
                       </div>
+                      {isAdmin && (
                       <Dialog open={editingMatch?.id === match.id} onOpenChange={(open) => !open && setEditingMatch(null)}>
                         <DialogTrigger asChild>
                           <Button 
@@ -881,6 +951,7 @@ const Index = () => {
                           </div>
                         </DialogContent>
                       </Dialog>
+                      )}
                     </div>
                   ))}
                 </div>
