@@ -237,15 +237,17 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background relative">
-      <div className="fixed inset-0 opacity-5 pointer-events-none">
+    <div className="min-h-screen relative">
+      <div className="fixed inset-0 z-0">
         <img 
           src="https://cdn.poehali.dev/projects/5af3188e-620b-4638-a258-d8bd1c941cff/files/3132a97b-5365-496f-a4e2-0939f59e1cd1.jpg" 
           alt="Stadium background"
           className="w-full h-full object-cover"
         />
+        <div className="absolute inset-0 bg-gradient-to-br from-background/95 via-background/90 to-background/95 backdrop-blur-sm"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(14,165,233,0.1),transparent_50%)]"></div>
       </div>
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 relative z-10">
         <div className="mb-8 relative overflow-hidden rounded-2xl animate-fade-in">
           <div className="relative h-64 bg-gradient-to-br from-primary via-accent to-primary">
             <img 
