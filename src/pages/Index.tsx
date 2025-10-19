@@ -59,7 +59,7 @@ interface Match {
 const initialTeams: Team[] = [
   {
     id: '1',
-    name: 'ФК ТОРНАДО',
+    name: 'ФК ТОРПЕДО',
     played: 0,
     won: 0,
     drawn: 0,
@@ -72,7 +72,7 @@ const initialTeams: Team[] = [
   },
   {
     id: '2',
-    name: 'ФК МОЛНИЯ',
+    name: 'ФУ НАГЛЕЦЫ ИЗ ВОРОНЕЖА',
     played: 0,
     won: 0,
     drawn: 0,
@@ -85,7 +85,7 @@ const initialTeams: Team[] = [
   },
   {
     id: '3',
-    name: 'ФК ТИТАН',
+    name: 'ФК UNION',
     played: 0,
     won: 0,
     drawn: 0,
@@ -98,7 +98,7 @@ const initialTeams: Team[] = [
   },
   {
     id: '4',
-    name: 'ФК ВИКТОРИЯ',
+    name: 'ФК САБОТАЖ',
     played: 0,
     won: 0,
     drawn: 0,
@@ -111,7 +111,7 @@ const initialTeams: Team[] = [
   },
   {
     id: '5',
-    name: 'ФК АТЛАНТ',
+    name: 'ФК ПРИДОН',
     played: 0,
     won: 0,
     drawn: 0,
@@ -124,7 +124,124 @@ const initialTeams: Team[] = [
   },
   {
     id: '6',
-    name: 'ФК ФЕНИКС',
+    name: 'ФК МУХТАР',
+    played: 0,
+    won: 0,
+    drawn: 0,
+    lost: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    points: 0,
+    form: [],
+    players: [],
+  },
+  {
+    id: '7',
+    name: 'ФК СПАРТАК',
+    played: 0,
+    won: 0,
+    drawn: 0,
+    lost: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    points: 0,
+    form: [],
+    players: [],
+  },
+  {
+    id: '8',
+    name: 'ФК ДИНАМО',
+    played: 0,
+    won: 0,
+    drawn: 0,
+    lost: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    points: 0,
+    form: [],
+    players: [],
+  },
+  {
+    id: '9',
+    name: 'ФК ЗЕНИТ',
+    played: 0,
+    won: 0,
+    drawn: 0,
+    lost: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    points: 0,
+    form: [],
+    players: [],
+  },
+  {
+    id: '10',
+    name: 'ФК ЛОКОМОТИВ',
+    played: 0,
+    won: 0,
+    drawn: 0,
+    lost: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    points: 0,
+    form: [],
+    players: [],
+  },
+  {
+    id: '11',
+    name: 'ФК РУБИН',
+    played: 0,
+    won: 0,
+    drawn: 0,
+    lost: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    points: 0,
+    form: [],
+    players: [],
+  },
+  {
+    id: '12',
+    name: 'ФК КРЫЛЬЯ СОВЕТОВ',
+    played: 0,
+    won: 0,
+    drawn: 0,
+    lost: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    points: 0,
+    form: [],
+    players: [],
+  },
+  {
+    id: '13',
+    name: 'ФК РОСТОВ',
+    played: 0,
+    won: 0,
+    drawn: 0,
+    lost: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    points: 0,
+    form: [],
+    players: [],
+  },
+  {
+    id: '14',
+    name: 'ФК УРАЛ',
+    played: 0,
+    won: 0,
+    drawn: 0,
+    lost: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    points: 0,
+    form: [],
+    players: [],
+  },
+  {
+    id: '15',
+    name: 'ФК СОЧИ',
     played: 0,
     won: 0,
     drawn: 0,
@@ -355,17 +472,17 @@ const Index = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-12 text-center">#</TableHead>
-                      <TableHead>Команда</TableHead>
-                      <TableHead className="text-center">И</TableHead>
-                      <TableHead className="text-center">В</TableHead>
-                      <TableHead className="text-center">Н</TableHead>
-                      <TableHead className="text-center">П</TableHead>
-                      <TableHead className="text-center">МЗ</TableHead>
-                      <TableHead className="text-center">МП</TableHead>
-                      <TableHead className="text-center">РМ</TableHead>
-                      <TableHead className="text-center font-bold">О</TableHead>
-                      <TableHead className="text-center">Форма</TableHead>
+                      <TableHead className="w-12 text-center text-xs">#</TableHead>
+                      <TableHead className="text-xs">Команда</TableHead>
+                      <TableHead className="text-center text-xs">И</TableHead>
+                      <TableHead className="text-center text-xs">В</TableHead>
+                      <TableHead className="text-center text-xs">Н</TableHead>
+                      <TableHead className="text-center text-xs">П</TableHead>
+                      <TableHead className="text-center text-xs">МЗ</TableHead>
+                      <TableHead className="text-center text-xs">МП</TableHead>
+                      <TableHead className="text-center text-xs">РМ</TableHead>
+                      <TableHead className="text-center font-bold text-xs">О</TableHead>
+                      <TableHead className="text-center text-xs">Форма</TableHead>
                       <TableHead></TableHead>
                     </TableRow>
                   </TableHeader>
@@ -375,29 +492,29 @@ const Index = () => {
                         key={team.id}
                         className="hover:bg-primary/5 transition-colors"
                       >
-                        <TableCell className="text-center font-bold">
+                        <TableCell className="text-center font-bold text-xs">
                           {index + 1}
                         </TableCell>
-                        <TableCell className="font-bold text-base">
+                        <TableCell className="font-semibold text-xs">
                           {team.name}
                         </TableCell>
-                        <TableCell className="text-center">{team.played}</TableCell>
-                        <TableCell className="text-center text-green-600 font-semibold">
+                        <TableCell className="text-center text-xs">{team.played}</TableCell>
+                        <TableCell className="text-center text-green-600 font-semibold text-xs">
                           {team.won}
                         </TableCell>
-                        <TableCell className="text-center text-yellow-600 font-semibold">
+                        <TableCell className="text-center text-yellow-600 font-semibold text-xs">
                           {team.drawn}
                         </TableCell>
-                        <TableCell className="text-center text-red-600 font-semibold">
+                        <TableCell className="text-center text-red-600 font-semibold text-xs">
                           {team.lost}
                         </TableCell>
-                        <TableCell className="text-center">{team.goalsFor}</TableCell>
-                        <TableCell className="text-center">{team.goalsAgainst}</TableCell>
-                        <TableCell className="text-center font-semibold">
+                        <TableCell className="text-center text-xs">{team.goalsFor}</TableCell>
+                        <TableCell className="text-center text-xs">{team.goalsAgainst}</TableCell>
+                        <TableCell className="text-center font-semibold text-xs">
                           {team.goalsFor - team.goalsAgainst > 0 ? '+' : ''}
                           {team.goalsFor - team.goalsAgainst}
                         </TableCell>
-                        <TableCell className="text-center font-black text-lg text-primary">
+                        <TableCell className="text-center font-black text-sm text-primary">
                           {team.points}
                         </TableCell>
                         <TableCell>
