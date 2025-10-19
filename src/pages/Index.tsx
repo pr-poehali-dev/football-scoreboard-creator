@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -257,8 +257,14 @@ const initialTeams: Team[] = [
 const initialMatches: Match[] = [];
 
 const Index = () => {
-  const [teams, setTeams] = useState<Team[]>(initialTeams);
-  const [matches, setMatches] = useState<Match[]>(initialMatches);
+  const [teams, setTeams] = useState<Team[]>(() => {
+    const saved = localStorage.getItem('footballTeams');
+    return saved ? JSON.parse(saved) : initialTeams;
+  });
+  const [matches, setMatches] = useState<Match[]>(() => {
+    const saved = localStorage.getItem('footballMatches');
+    return saved ? JSON.parse(saved) : initialMatches;
+  });
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [editingTeam, setEditingTeam] = useState<Team | null>(null);
   const [editingPlayer, setEditingPlayer] = useState<{teamId: string, player: Player} | null>(null);
@@ -275,6 +281,14 @@ const Index = () => {
   const [showAdminLogin, setShowAdminLogin] = useState(false);
 
   const adminPassword = 'admin123';
+
+  useEffect(() => {
+    localStorage.setItem('footballTeams', JSON.stringify(teams));
+  }, [teams]);
+
+  useEffect(() => {
+    localStorage.setItem('footballMatches', JSON.stringify(matches));
+  }, [matches]);
 
   const handleAdminLogin = () => {
     if (password === adminPassword) {
