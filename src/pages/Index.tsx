@@ -221,6 +221,11 @@ const Index = () => {
     setEditingTeam(null);
   };
 
+  const updateTeamStats = (teamId: string, updates: Partial<Team>) => {
+    setTeams(teams.map(t => t.id === teamId ? {...t, ...updates} : t));
+    setEditingTeam(null);
+  };
+
   const updatePlayer = (teamId: string, playerId: string, updates: Partial<Player>) => {
     setTeams(teams.map(t => 
       t.id === teamId 
@@ -435,23 +440,105 @@ const Index = () => {
                                   <Icon name="Pencil" size={16} />
                                 </Button>
                               </DialogTrigger>
-                              <DialogContent>
+                              <DialogContent className="max-w-2xl">
                                 <DialogHeader>
-                                  <DialogTitle>Изменить название команды</DialogTitle>
+                                  <DialogTitle>Редактировать команду</DialogTitle>
                                 </DialogHeader>
                                 <div className="space-y-4 py-4">
                                   <div className="space-y-2">
                                     <Label>Название команды</Label>
                                     <Input
-                                      value={newTeamName}
-                                      onChange={(e) => setNewTeamName(e.target.value)}
+                                      defaultValue={team.name}
+                                      id={`team-name-${team.id}`}
                                     />
                                   </div>
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                      <Label>Очки</Label>
+                                      <Input
+                                        type="number"
+                                        defaultValue={team.points}
+                                        id={`team-points-${team.id}`}
+                                      />
+                                    </div>
+                                    <div className="space-y-2">
+                                      <Label>Игры</Label>
+                                      <Input
+                                        type="number"
+                                        defaultValue={team.played}
+                                        id={`team-played-${team.id}`}
+                                      />
+                                    </div>
+                                  </div>
+                                  <div className="grid grid-cols-3 gap-4">
+                                    <div className="space-y-2">
+                                      <Label>Победы</Label>
+                                      <Input
+                                        type="number"
+                                        defaultValue={team.won}
+                                        id={`team-won-${team.id}`}
+                                      />
+                                    </div>
+                                    <div className="space-y-2">
+                                      <Label>Ничьи</Label>
+                                      <Input
+                                        type="number"
+                                        defaultValue={team.drawn}
+                                        id={`team-drawn-${team.id}`}
+                                      />
+                                    </div>
+                                    <div className="space-y-2">
+                                      <Label>Поражения</Label>
+                                      <Input
+                                        type="number"
+                                        defaultValue={team.lost}
+                                        id={`team-lost-${team.id}`}
+                                      />
+                                    </div>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                      <Label>Мячи забито</Label>
+                                      <Input
+                                        type="number"
+                                        defaultValue={team.goalsFor}
+                                        id={`team-goalsfor-${team.id}`}
+                                      />
+                                    </div>
+                                    <div className="space-y-2">
+                                      <Label>Мячи пропущено</Label>
+                                      <Input
+                                        type="number"
+                                        defaultValue={team.goalsAgainst}
+                                        id={`team-goalsagainst-${team.id}`}
+                                      />
+                                    </div>
+                                  </div>
                                   <Button
-                                    onClick={() => updateTeamName(team.id, newTeamName)}
+                                    onClick={() => {
+                                      const name = (document.getElementById(`team-name-${team.id}`) as HTMLInputElement).value;
+                                      const points = parseInt((document.getElementById(`team-points-${team.id}`) as HTMLInputElement).value) || 0;
+                                      const played = parseInt((document.getElementById(`team-played-${team.id}`) as HTMLInputElement).value) || 0;
+                                      const won = parseInt((document.getElementById(`team-won-${team.id}`) as HTMLInputElement).value) || 0;
+                                      const drawn = parseInt((document.getElementById(`team-drawn-${team.id}`) as HTMLInputElement).value) || 0;
+                                      const lost = parseInt((document.getElementById(`team-lost-${team.id}`) as HTMLInputElement).value) || 0;
+                                      const goalsFor = parseInt((document.getElementById(`team-goalsfor-${team.id}`) as HTMLInputElement).value) || 0;
+                                      const goalsAgainst = parseInt((document.getElementById(`team-goalsagainst-${team.id}`) as HTMLInputElement).value) || 0;
+                                      
+                                      const oldName = teams.find(t => t.id === team.id)?.name;
+                                      setTeams(teams.map(t => t.id === team.id ? {...t, name, points, played, won, drawn, lost, goalsFor, goalsAgainst} : t));
+                                      if (oldName !== name) {
+                                        setMatches(matches.map(m => ({
+                                          ...m,
+                                          homeTeam: m.homeTeam === oldName ? name : m.homeTeam,
+                                          awayTeam: m.awayTeam === oldName ? name : m.awayTeam
+                                        })));
+                                      }
+                                      setEditingTeam(null);
+                                    }}
                                     className="w-full"
                                   >
-                                    Сохранить
+                                    Сохранить изменения
                                   </Button>
                                 </div>
                               </DialogContent>
