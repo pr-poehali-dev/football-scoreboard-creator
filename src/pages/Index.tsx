@@ -60,145 +60,84 @@ const initialTeams: Team[] = [
   {
     id: '1',
     name: 'ФК ТОРНАДО',
-    played: 10,
-    won: 7,
-    drawn: 2,
-    lost: 1,
-    goalsFor: 21,
-    goalsAgainst: 8,
-    points: 23,
-    form: ['W', 'W', 'D', 'W', 'W'],
-    players: [
-      { id: '1', name: 'Промес', position: 'Нападающий', goals: 8, assists: 3, matches: 10 },
-      { id: '2', name: 'Сафонов', position: 'Вратарь', goals: 0, assists: 0, matches: 10 },
-      { id: '3', name: 'Зобнин', position: 'Полузащитник', goals: 2, assists: 5, matches: 10 },
-    ],
+    played: 0,
+    won: 0,
+    drawn: 0,
+    lost: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    points: 0,
+    form: [],
+    players: [],
   },
   {
     id: '2',
     name: 'ФК МОЛНИЯ',
-    played: 10,
-    won: 6,
-    drawn: 3,
-    lost: 1,
-    goalsFor: 18,
-    goalsAgainst: 7,
-    points: 21,
-    form: ['W', 'D', 'W', 'W', 'D'],
-    players: [
-      { id: '4', name: 'Дзюба', position: 'Нападающий', goals: 7, assists: 2, matches: 10 },
-      { id: '5', name: 'Кержаков', position: 'Нападающий', goals: 5, assists: 4, matches: 9 },
-    ],
+    played: 0,
+    won: 0,
+    drawn: 0,
+    lost: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    points: 0,
+    form: [],
+    players: [],
   },
   {
     id: '3',
     name: 'ФК ТИТАН',
-    played: 10,
-    won: 6,
-    drawn: 2,
-    lost: 2,
-    goalsFor: 17,
-    goalsAgainst: 10,
-    points: 20,
-    form: ['L', 'W', 'W', 'D', 'W'],
-    players: [
-      { id: '6', name: 'Влашич', position: 'Полузащитник', goals: 6, assists: 3, matches: 10 },
-    ],
+    played: 0,
+    won: 0,
+    drawn: 0,
+    lost: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    points: 0,
+    form: [],
+    players: [],
   },
   {
     id: '4',
     name: 'ФК ВИКТОРИЯ',
-    played: 10,
-    won: 5,
-    drawn: 3,
-    lost: 2,
-    goalsFor: 15,
-    goalsAgainst: 11,
-    points: 18,
-    form: ['W', 'D', 'L', 'W', 'D'],
-    players: [
-      { id: '7', name: 'Смолов', position: 'Нападающий', goals: 5, assists: 1, matches: 10 },
-    ],
+    played: 0,
+    won: 0,
+    drawn: 0,
+    lost: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    points: 0,
+    form: [],
+    players: [],
   },
   {
     id: '5',
     name: 'ФК АТЛАНТ',
-    played: 10,
-    won: 4,
-    drawn: 4,
-    lost: 2,
-    goalsFor: 14,
-    goalsAgainst: 12,
-    points: 16,
-    form: ['D', 'W', 'D', 'L', 'W'],
-    players: [
-      { id: '8', name: 'Сулейманов', position: 'Полузащитник', goals: 4, assists: 2, matches: 10 },
-    ],
+    played: 0,
+    won: 0,
+    drawn: 0,
+    lost: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    points: 0,
+    form: [],
+    players: [],
   },
   {
     id: '6',
     name: 'ФК ФЕНИКС',
-    played: 10,
-    won: 3,
-    drawn: 3,
-    lost: 4,
-    goalsFor: 11,
-    goalsAgainst: 14,
-    points: 12,
-    form: ['L', 'D', 'W', 'L', 'D'],
-    players: [
-      { id: '9', name: 'Фомин', position: 'Полузащитник', goals: 3, assists: 4, matches: 10 },
-    ],
+    played: 0,
+    won: 0,
+    drawn: 0,
+    lost: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    points: 0,
+    form: [],
+    players: [],
   },
 ];
 
-const initialMatches: Match[] = [
-  {
-    id: '1',
-    date: '2025-10-25',
-    homeTeam: 'ФК ТОРНАДО',
-    awayTeam: 'ФК МОЛНИЯ',
-    homeScore: null,
-    awayScore: null,
-    status: 'scheduled',
-  },
-  {
-    id: '2',
-    date: '2025-10-26',
-    homeTeam: 'ФК ТИТАН',
-    awayTeam: 'ФК ВИКТОРИЯ',
-    homeScore: null,
-    awayScore: null,
-    status: 'scheduled',
-  },
-  {
-    id: '3',
-    date: '2025-10-27',
-    homeTeam: 'ФК АТЛАНТ',
-    awayTeam: 'ФК ФЕНИКС',
-    homeScore: null,
-    awayScore: null,
-    status: 'scheduled',
-  },
-  {
-    id: '4',
-    date: '2025-10-20',
-    homeTeam: 'ФК ТОРНАДО',
-    awayTeam: 'ФК ТИТАН',
-    homeScore: 2,
-    awayScore: 1,
-    status: 'finished',
-  },
-  {
-    id: '5',
-    date: '2025-10-21',
-    homeTeam: 'ФК МОЛНИЯ',
-    awayTeam: 'ФК ВИКТОРИЯ',
-    homeScore: 1,
-    awayScore: 1,
-    status: 'finished',
-  },
-];
+const initialMatches: Match[] = [];
 
 const Index = () => {
   const [teams, setTeams] = useState<Team[]>(initialTeams);
@@ -278,12 +217,24 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background">
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-8 text-center animate-fade-in">
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <Icon name="Trophy" size={40} className="text-primary" />
-            <h1 className="text-5xl font-black text-primary">ФУТБОЛЬНАЯ ЛИГА</h1>
+        <div className="mb-8 relative overflow-hidden rounded-2xl animate-fade-in">
+          <div className="relative h-64 bg-gradient-to-br from-primary via-accent to-primary">
+            <img 
+              src="https://cdn.poehali.dev/projects/5af3188e-620b-4638-a258-d8bd1c941cff/files/ec79f03a-2fc9-48b4-8e52-a3fe4e639037.jpg" 
+              alt="ЛДЛ League Banner"
+              className="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-overlay"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+            <div className="relative h-full flex flex-col items-center justify-center text-center px-4">
+              <div className="flex items-center gap-4 mb-3">
+                <Icon name="Trophy" size={56} className="text-white drop-shadow-lg" />
+                <h1 className="text-7xl font-black text-white tracking-wider drop-shadow-2xl">ЛДЛ</h1>
+                <Icon name="Award" size={56} className="text-white drop-shadow-lg" />
+              </div>
+              <p className="text-white/90 text-2xl font-bold tracking-wide drop-shadow-lg">Любительская Дворовая Лига</p>
+              <p className="text-white/70 text-lg mt-2">Сезон 2025/2026</p>
+            </div>
           </div>
-          <p className="text-muted-foreground text-lg">Сезон 2025/2026</p>
         </div>
 
         <Tabs defaultValue="standings" className="space-y-6">
