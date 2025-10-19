@@ -139,12 +139,15 @@ const initialTeams: Team[] = [
 
 const initialMatches: Match[] = [];
 
-const API_URL = 'https://functions.poehali.dev/e72c0a94-78e5-4cc8-8bf5-30193a2cec40';
-
 const Index = () => {
-  const [teams, setTeams] = useState<Team[]>([]);
-  const [matches, setMatches] = useState<Match[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [teams, setTeams] = useState<Team[]>(() => {
+    const saved = localStorage.getItem('footballTeams');
+    return saved ? JSON.parse(saved) : initialTeams;
+  });
+  const [matches, setMatches] = useState<Match[]>(() => {
+    const saved = localStorage.getItem('footballMatches');
+    return saved ? JSON.parse(saved) : initialMatches;
+  });
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [editingTeam, setEditingTeam] = useState<Team | null>(null);
   const [editingPlayer, setEditingPlayer] = useState<{teamId: string, player: Player} | null>(null);
@@ -162,61 +165,13 @@ const Index = () => {
 
   const adminPassword = 'admin123';
 
-  const loadData = async () => {
-    try {
-      const [teamsRes, matchesRes] = await Promise.all([
-        fetch(`${API_URL}?path=teams`),
-        fetch(`${API_URL}?path=matches`)
-      ]);
-      
-      const teamsData = await teamsRes.json();
-      const matchesData = await matchesRes.json();
-      
-      const mappedTeams = teamsData.teams.map((t: any) => ({
-        id: t.id,
-        name: t.name,
-        played: t.played,
-        won: t.won,
-        drawn: t.drawn,
-        lost: t.lost,
-        goalsFor: t.goals_for,
-        goalsAgainst: t.goals_against,
-        points: t.points,
-        form: JSON.parse(t.form),
-        players: t.players.map((p: any) => ({
-          id: p.id,
-          name: p.name,
-          position: p.position,
-          goals: p.goals,
-          assists: p.assists,
-          matches: p.matches
-        }))
-      }));
-      
-      const mappedMatches = matchesData.matches.map((m: any) => ({
-        id: m.id,
-        date: m.date,
-        homeTeam: m.home_team,
-        awayTeam: m.away_team,
-        homeScore: m.home_score,
-        awayScore: m.away_score,
-        status: m.status
-      }));
-      
-      setTeams(mappedTeams);
-      setMatches(mappedMatches);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error loading data:', error);
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    localStorage.setItem('footballTeams', JSON.stringify(teams));
+  }, [teams]);
 
   useEffect(() => {
-    loadData();
-    const interval = setInterval(loadData, 3000);
-    return () => clearInterval(interval);
-  }, []);
+    localStorage.setItem('footballMatches', JSON.stringify(matches));
+  }, [matches]);
 
   const handleAdminLogin = () => {
     if (password === adminPassword) {
@@ -228,80 +183,57 @@ const Index = () => {
     }
   };
 
-  const updateTeamName = async (teamId: string, newName: string) => {
-    await fetch(API_URL, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({action: 'update_team', team_id: teamId, updates: {name: newName}})
-    });
+  const updateTeamName = (teamId: string, newName: string) => {
+    setTeams(teams.map(t => t.id === teamId ? {...t, name: newName} : t));
+    setMatches(matches.map(m => ({
+      ...m,
+      homeTeam: m.homeTeam === teams.find(t => t.id === teamId)?.name ? newName : m.homeTeam,
+      awayTeam: m.awayTeam === teams.find(t => t.id === teamId)?.name ? newName : m.awayTeam
+    })));
     setEditingTeam(null);
-    loadData();
   };
 
-  const updateTeamStats = async (teamId: string, updates: Partial<Team>) => {
-    const dbUpdates: any = {};
-    if (updates.played !== undefined) dbUpdates.played = updates.played;
-    if (updates.won !== undefined) dbUpdates.won = updates.won;
-    if (updates.drawn !== undefined) dbUpdates.drawn = updates.drawn;
-    if (updates.lost !== undefined) dbUpdates.lost = updates.lost;
-    if (updates.goalsFor !== undefined) dbUpdates.goals_for = updates.goalsFor;
-    if (updates.goalsAgainst !== undefined) dbUpdates.goals_against = updates.goalsAgainst;
-    if (updates.points !== undefined) dbUpdates.points = updates.points;
-    if (updates.form !== undefined) dbUpdates.form = JSON.stringify(updates.form);
-    
-    await fetch(API_URL, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({action: 'update_team', team_id: teamId, updates: dbUpdates})
-    });
+  const updateTeamStats = (teamId: string, updates: Partial<Team>) => {
+    setTeams(teams.map(t => t.id === teamId ? {...t, ...updates} : t));
     setEditingTeam(null);
-    loadData();
   };
 
-  const updatePlayer = async (teamId: string, playerId: string, updates: Partial<Player>) => {
-    await fetch(API_URL, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({action: 'update_player', player_id: playerId, updates})
-    });
+  const updatePlayer = (teamId: string, playerId: string, updates: Partial<Player>) => {
+    setTeams(teams.map(t => 
+      t.id === teamId 
+        ? {...t, players: t.players.map(p => p.id === playerId ? {...p, ...updates} : p)}
+        : t
+    ));
     setEditingPlayer(null);
-    loadData();
   };
 
-  const addPlayer = async (teamId: string) => {
+  const addPlayer = (teamId: string) => {
     if (!newPlayerName || !newPlayerPosition) return;
-    const newPlayer = {
+    const newPlayer: Player = {
       id: Date.now().toString(),
-      team_id: teamId,
       name: newPlayerName,
       position: newPlayerPosition,
       goals: 0,
       assists: 0,
       matches: 0
     };
-    await fetch(API_URL, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({action: 'add_player', player: newPlayer})
-    });
+    setTeams(teams.map(t => 
+      t.id === teamId ? {...t, players: [...t.players, newPlayer]} : t
+    ));
     setNewPlayerName('');
     setNewPlayerPosition('');
-    loadData();
   };
 
-  const updateMatchScore = async (matchId: string, homeScore: number, awayScore: number) => {
-    await fetch(API_URL, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({action: 'update_match', match_id: matchId, updates: {homeScore, awayScore, status: 'finished'}})
-    });
+  const updateMatchScore = (matchId: string, homeScore: number, awayScore: number) => {
+    setMatches(matches.map(m => 
+      m.id === matchId ? {...m, homeScore, awayScore, status: 'finished' as const} : m
+    ));
     setEditingMatch(null);
-    loadData();
   };
 
-  const addMatch = async () => {
+  const addMatch = () => {
     if (!newMatchHomeTeam || !newMatchAwayTeam || !newMatchDate) return;
-    const newMatch = {
+    const newMatch: Match = {
       id: Date.now().toString(),
       date: newMatchDate,
       homeTeam: newMatchHomeTeam,
@@ -310,48 +242,11 @@ const Index = () => {
       awayScore: null,
       status: 'scheduled'
     };
-    await fetch(API_URL, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({action: 'add_match', match: newMatch})
-    });
+    setMatches([...matches, newMatch]);
     setNewMatchHomeTeam('');
     setNewMatchAwayTeam('');
     setNewMatchDate('');
     setIsAddingMatch(false);
-    loadData();
-  };
-
-  const generateFullCalendar = async () => {
-    const newMatches: any[] = [];
-    const today = new Date();
-    let matchCounter = 0;
-
-    for (let i = 0; i < teams.length; i++) {
-      for (let j = i + 1; j < teams.length; j++) {
-        const matchDate = new Date(today);
-        matchDate.setDate(today.getDate() + matchCounter * 7);
-        
-        newMatches.push({
-          id: `${Date.now()}-${matchCounter}`,
-          date: matchDate.toISOString().split('T')[0],
-          homeTeam: teams[i].name,
-          awayTeam: teams[j].name,
-          homeScore: null,
-          awayScore: null,
-          status: 'scheduled'
-        });
-        
-        matchCounter++;
-      }
-    }
-
-    await fetch(API_URL, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({action: 'add_matches_bulk', matches: newMatches})
-    });
-    loadData();
   };
 
   const sortedTeams = [...teams].sort((a, b) => {
@@ -369,17 +264,6 @@ const Index = () => {
     if (result === 'D') return 'bg-yellow-500 hover:bg-yellow-500 text-white';
     return 'bg-red-500 hover:bg-red-500 text-white';
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <Icon name="Loader2" size={48} className="animate-spin mx-auto mb-4" />
-          <p className="text-lg">Загрузка...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen relative">
@@ -928,19 +812,6 @@ const Index = () => {
           </TabsContent>
 
           <TabsContent value="calendar" className="animate-fade-in space-y-6">
-            {isAdmin && (
-            <div className="flex gap-2">
-              <Button 
-                variant="default" 
-                onClick={generateFullCalendar}
-                className="flex-1"
-              >
-                <Icon name="CalendarDays" size={16} className="mr-2" />
-                Создать календарь игр
-              </Button>
-            </div>
-            )}
-            
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
