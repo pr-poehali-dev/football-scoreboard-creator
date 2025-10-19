@@ -332,10 +332,10 @@ const Index = () => {
             <div className="relative h-full flex flex-col items-center justify-center text-center px-4">
               <div className="flex items-center gap-4 mb-3">
                 <Icon name="Trophy" size={56} className="text-white drop-shadow-lg" />
-                <h1 className="text-7xl font-black text-white tracking-wider drop-shadow-2xl">ЛЫЛ</h1>
+                <h1 className="text-6xl font-black text-white tracking-wider drop-shadow-2xl">ЛФЛ ВОРОНЕЖ</h1>
                 <Icon name="Award" size={56} className="text-white drop-shadow-lg" />
               </div>
-              <p className="text-white/90 text-2xl font-bold tracking-wide drop-shadow-lg">Любительская Дворовая Лига</p>
+              <p className="text-white/90 text-2xl font-bold tracking-wide drop-shadow-lg">Любительская Футбольная Лига</p>
               <p className="text-white/70 text-lg mt-2">Сезон 2025/2026</p>
             </div>
           </div>
@@ -393,7 +393,58 @@ const Index = () => {
                           {index + 1}
                         </TableCell>
                         <TableCell className="font-semibold text-xs">
-                          {team.name}
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <button 
+                                className="text-left hover:text-primary hover:underline transition-colors cursor-pointer"
+                                onClick={() => setSelectedTeam(team)}
+                              >
+                                {team.name}
+                              </button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-2xl">
+                              <DialogHeader>
+                                <DialogTitle className="flex items-center gap-2">
+                                  <Icon name="Users" size={24} className="text-primary" />
+                                  {team.name} - Состав команды
+                                </DialogTitle>
+                              </DialogHeader>
+                              <div className="py-4">
+                                {team.players.length === 0 ? (
+                                  <p className="text-center text-muted-foreground py-8">
+                                    Игроки еще не добавлены
+                                  </p>
+                                ) : (
+                                  <Table>
+                                    <TableHeader>
+                                      <TableRow>
+                                        <TableHead>Имя</TableHead>
+                                        <TableHead>Позиция</TableHead>
+                                        <TableHead className="text-center">Голы</TableHead>
+                                        <TableHead className="text-center">Пасы</TableHead>
+                                        <TableHead className="text-center">Матчи</TableHead>
+                                      </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                      {team.players.map((player) => (
+                                        <TableRow key={player.id}>
+                                          <TableCell className="font-medium">{player.name}</TableCell>
+                                          <TableCell>{player.position}</TableCell>
+                                          <TableCell className="text-center font-semibold text-green-600">
+                                            {player.goals}
+                                          </TableCell>
+                                          <TableCell className="text-center font-semibold text-blue-600">
+                                            {player.assists}
+                                          </TableCell>
+                                          <TableCell className="text-center">{player.matches}</TableCell>
+                                        </TableRow>
+                                      ))}
+                                    </TableBody>
+                                  </Table>
+                                )}
+                              </div>
+                            </DialogContent>
+                          </Dialog>
                         </TableCell>
                         <TableCell className="text-center text-xs">{team.played}</TableCell>
                         <TableCell className="text-center text-green-600 font-semibold text-xs">
