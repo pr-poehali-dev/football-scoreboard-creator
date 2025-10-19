@@ -59,7 +59,7 @@ interface Match {
 const initialTeams: Team[] = [
   {
     id: '1',
-    name: 'Спартак',
+    name: 'ФК ТОРНАДО',
     played: 10,
     won: 7,
     drawn: 2,
@@ -76,7 +76,7 @@ const initialTeams: Team[] = [
   },
   {
     id: '2',
-    name: 'Зенит',
+    name: 'ФК МОЛНИЯ',
     played: 10,
     won: 6,
     drawn: 3,
@@ -92,7 +92,7 @@ const initialTeams: Team[] = [
   },
   {
     id: '3',
-    name: 'ЦСКА',
+    name: 'ФК ТИТАН',
     played: 10,
     won: 6,
     drawn: 2,
@@ -107,7 +107,7 @@ const initialTeams: Team[] = [
   },
   {
     id: '4',
-    name: 'Локомотив',
+    name: 'ФК ВИКТОРИЯ',
     played: 10,
     won: 5,
     drawn: 3,
@@ -122,7 +122,7 @@ const initialTeams: Team[] = [
   },
   {
     id: '5',
-    name: 'Краснодар',
+    name: 'ФК АТЛАНТ',
     played: 10,
     won: 4,
     drawn: 4,
@@ -137,7 +137,7 @@ const initialTeams: Team[] = [
   },
   {
     id: '6',
-    name: 'Динамо',
+    name: 'ФК ФЕНИКС',
     played: 10,
     won: 3,
     drawn: 3,
@@ -156,8 +156,8 @@ const initialMatches: Match[] = [
   {
     id: '1',
     date: '2025-10-25',
-    homeTeam: 'Спартак',
-    awayTeam: 'Зенит',
+    homeTeam: 'ФК ТОРНАДО',
+    awayTeam: 'ФК МОЛНИЯ',
     homeScore: null,
     awayScore: null,
     status: 'scheduled',
@@ -165,8 +165,8 @@ const initialMatches: Match[] = [
   {
     id: '2',
     date: '2025-10-26',
-    homeTeam: 'ЦСКА',
-    awayTeam: 'Локомотив',
+    homeTeam: 'ФК ТИТАН',
+    awayTeam: 'ФК ВИКТОРИЯ',
     homeScore: null,
     awayScore: null,
     status: 'scheduled',
@@ -174,8 +174,8 @@ const initialMatches: Match[] = [
   {
     id: '3',
     date: '2025-10-27',
-    homeTeam: 'Краснодар',
-    awayTeam: 'Динамо',
+    homeTeam: 'ФК АТЛАНТ',
+    awayTeam: 'ФК ФЕНИКС',
     homeScore: null,
     awayScore: null,
     status: 'scheduled',
@@ -183,8 +183,8 @@ const initialMatches: Match[] = [
   {
     id: '4',
     date: '2025-10-20',
-    homeTeam: 'Спартак',
-    awayTeam: 'ЦСКА',
+    homeTeam: 'ФК ТОРНАДО',
+    awayTeam: 'ФК ТИТАН',
     homeScore: 2,
     awayScore: 1,
     status: 'finished',
@@ -192,8 +192,8 @@ const initialMatches: Match[] = [
   {
     id: '5',
     date: '2025-10-21',
-    homeTeam: 'Зенит',
-    awayTeam: 'Локомотив',
+    homeTeam: 'ФК МОЛНИЯ',
+    awayTeam: 'ФК ВИКТОРИЯ',
     homeScore: 1,
     awayScore: 1,
     status: 'finished',
