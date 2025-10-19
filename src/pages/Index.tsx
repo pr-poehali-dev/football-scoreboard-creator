@@ -273,8 +273,9 @@ const Index = () => {
           alt="Stadium background"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-background/95 via-background/90 to-background/95 backdrop-blur-sm"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(14,165,233,0.1),transparent_50%)]"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-background via-background/95 to-background backdrop-blur-sm"></div>
+        <div className="absolute inset-0 football-pattern"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-primary/5 via-transparent to-accent/5"></div>
       </div>
       <div className="container mx-auto px-4 py-8 relative z-10">
         <div className="flex justify-end mb-4">
@@ -321,8 +322,8 @@ const Index = () => {
             </Button>
           )}
         </div>
-        <div className="mb-8 relative overflow-hidden rounded-2xl animate-fade-in">
-          <div className="relative h-64 bg-gradient-to-br from-primary via-accent to-primary">
+        <div className="mb-8 relative overflow-hidden rounded-2xl animate-slide-up shadow-2xl">
+          <div className="relative h-64 bg-gradient-to-br from-primary via-accent to-primary shadow-inner">
             <img 
               src="https://cdn.poehali.dev/projects/5af3188e-620b-4638-a258-d8bd1c941cff/files/ec79f03a-2fc9-48b4-8e52-a3fe4e639037.jpg" 
               alt="ЛДЛ League Banner"
@@ -330,13 +331,13 @@ const Index = () => {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
             <div className="relative h-full flex flex-col items-center justify-center text-center px-4">
-              <div className="flex items-center gap-4 mb-3">
-                <Icon name="Trophy" size={56} className="text-white drop-shadow-lg" />
-                <h1 className="text-6xl font-black text-white tracking-wider drop-shadow-2xl">ЛФЛ ВОРОНЕЖ</h1>
-                <Icon name="Award" size={56} className="text-white drop-shadow-lg" />
+              <div className="flex items-center gap-4 mb-3 animate-scale-in">
+                <Icon name="Trophy" size={60} className="text-accent drop-shadow-2xl animate-pulse" />
+                <h1 className="text-7xl font-black text-white tracking-wider drop-shadow-2xl">ЛФЛ ВОРОНЕЖ</h1>
+                <Icon name="Award" size={60} className="text-accent drop-shadow-2xl animate-pulse" />
               </div>
-              <p className="text-white/90 text-2xl font-bold tracking-wide drop-shadow-lg">Любительская Футбольная Лига</p>
-              <p className="text-white/70 text-lg mt-2">Сезон 2025/2026</p>
+              <p className="text-white/95 text-3xl font-bold tracking-wide drop-shadow-lg">Любительская Футбольная Лига</p>
+              <p className="text-accent text-xl mt-2 font-semibold drop-shadow-md">⚽ Сезон 2025/2026 ⚽</p>
             </div>
           </div>
         </div>
@@ -357,12 +358,13 @@ const Index = () => {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="standings" className="animate-fade-in">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Icon name="Trophy" size={24} className="text-accent" />
+          <TabsContent value="standings" className="animate-slide-up">
+            <Card className="border-2 border-primary/20 shadow-xl shadow-primary/10 backdrop-blur-sm bg-card/95">
+              <CardHeader className="bg-gradient-to-r from-primary/10 to-accent/10 border-b border-primary/20">
+                <CardTitle className="flex items-center gap-3 text-2xl">
+                  <Icon name="Trophy" size={28} className="text-accent animate-pulse" />
                   Турнирная таблица
+                  <Icon name="Medal" size={24} className="text-primary ml-auto" />
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -387,10 +389,17 @@ const Index = () => {
                     {sortedTeams.map((team, index) => (
                       <TableRow
                         key={team.id}
-                        className="hover:bg-primary/5 transition-colors"
+                        className="hover:bg-primary/10 transition-all duration-300 border-b border-primary/5 hover:scale-[1.01]"
                       >
-                        <TableCell className="text-center font-bold text-xs">
-                          {index + 1}
+                        <TableCell className="text-center font-bold text-sm">
+                          <div className={`inline-flex items-center justify-center w-8 h-8 rounded-full ${
+                            index === 0 ? 'bg-accent text-background' :
+                            index === 1 ? 'bg-primary/80 text-white' :
+                            index === 2 ? 'bg-secondary/80 text-white' :
+                            'bg-muted text-muted-foreground'
+                          } font-bold`}>
+                            {index + 1}
+                          </div>
                         </TableCell>
                         <TableCell className="font-semibold text-xs">
                           <Dialog>
@@ -462,8 +471,10 @@ const Index = () => {
                           {team.goalsFor - team.goalsAgainst > 0 ? '+' : ''}
                           {team.goalsFor - team.goalsAgainst}
                         </TableCell>
-                        <TableCell className="text-center font-black text-sm text-primary">
-                          {team.points}
+                        <TableCell className="text-center">
+                          <span className="inline-flex items-center justify-center bg-gradient-to-br from-primary to-accent text-white font-black text-lg px-3 py-1 rounded-lg shadow-md">
+                            {team.points}
+                          </span>
                         </TableCell>
                         <TableCell>
                           <div className="flex gap-1">
