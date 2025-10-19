@@ -1,0 +1,24 @@
+{
+  "tests": [
+    {
+      "name": "Get teams list",
+      "method": "GET",
+      "path": "/?path=teams",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "teams": "array"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Get matches list",
+      "method": "GET",
+      "path": "/?path=matches",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "matches": "array"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}
