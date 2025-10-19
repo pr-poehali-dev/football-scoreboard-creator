@@ -149,6 +149,10 @@ const Index = () => {
   const [newTeamName, setNewTeamName] = useState('');
   const [newPlayerName, setNewPlayerName] = useState('');
   const [newPlayerPosition, setNewPlayerPosition] = useState('');
+  const [newMatchHomeTeam, setNewMatchHomeTeam] = useState('');
+  const [newMatchAwayTeam, setNewMatchAwayTeam] = useState('');
+  const [newMatchDate, setNewMatchDate] = useState('');
+  const [isAddingMatch, setIsAddingMatch] = useState(false);
 
   const updateTeamName = (teamId: string, newName: string) => {
     setTeams(teams.map(t => t.id === teamId ? {...t, name: newName} : t));
@@ -198,6 +202,24 @@ const Index = () => {
     setEditingMatch(null);
   };
 
+  const addMatch = () => {
+    if (!newMatchHomeTeam || !newMatchAwayTeam || !newMatchDate) return;
+    const newMatch: Match = {
+      id: Date.now().toString(),
+      date: newMatchDate,
+      homeTeam: newMatchHomeTeam,
+      awayTeam: newMatchAwayTeam,
+      homeScore: null,
+      awayScore: null,
+      status: 'scheduled'
+    };
+    setMatches([...matches, newMatch]);
+    setNewMatchHomeTeam('');
+    setNewMatchAwayTeam('');
+    setNewMatchDate('');
+    setIsAddingMatch(false);
+  };
+
   const sortedTeams = [...teams].sort((a, b) => {
     if (b.points !== a.points) return b.points - a.points;
     const diffA = a.goalsFor - a.goalsAgainst;
@@ -215,7 +237,14 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background relative">
+      <div className="fixed inset-0 opacity-5 pointer-events-none">
+        <img 
+          src="https://cdn.poehali.dev/projects/5af3188e-620b-4638-a258-d8bd1c941cff/files/3132a97b-5365-496f-a4e2-0939f59e1cd1.jpg" 
+          alt="Stadium background"
+          className="w-full h-full object-cover"
+        />
+      </div>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8 relative overflow-hidden rounded-2xl animate-fade-in">
           <div className="relative h-64 bg-gradient-to-br from-primary via-accent to-primary">
@@ -701,14 +730,81 @@ const Index = () => {
 
           <TabsContent value="calendar" className="animate-fade-in space-y-6">
             <Card>
-              <CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
                   <Icon name="CalendarClock" size={24} className="text-accent" />
                   Предстоящие матчи
                 </CardTitle>
+                <Dialog open={isAddingMatch} onOpenChange={setIsAddingMatch}>
+                  <DialogTrigger asChild>
+                    <Button variant="default">
+                      <Icon name="Plus" size={16} className="mr-2" />
+                      Добавить матч
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Создать новый матч</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                      <div className="space-y-2">
+                        <Label>Дата матча</Label>
+                        <Input
+                          type="date"
+                          value={newMatchDate}
+                          onChange={(e) => setNewMatchDate(e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Команда хозяев</Label>
+                        <select
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          value={newMatchHomeTeam}
+                          onChange={(e) => setNewMatchHomeTeam(e.target.value)}
+                        >
+                          <option value="">Выберите команду</option>
+                          {teams.map((team) => (
+                            <option key={team.id} value={team.name}>
+                              {team.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Команда гостей</Label>
+                        <select
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          value={newMatchAwayTeam}
+                          onChange={(e) => setNewMatchAwayTeam(e.target.value)}
+                        >
+                          <option value="">Выберите команду</option>
+                          {teams.map((team) => (
+                            <option key={team.id} value={team.name}>
+                              {team.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <Button
+                        onClick={addMatch}
+                        className="w-full"
+                        disabled={!newMatchHomeTeam || !newMatchAwayTeam || !newMatchDate}
+                      >
+                        Создать матч
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
+                {upcomingMatches.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Icon name="CalendarX" size={48} className="mx-auto mb-3 opacity-50" />
+                    <p>Нет предстоящих матчей</p>
+                    <p className="text-sm mt-1">Нажмите "Добавить матч" чтобы создать расписание</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
                   {upcomingMatches.map((match) => (
                     <div
                       key={match.id}
@@ -786,6 +882,7 @@ const Index = () => {
                     </div>
                   ))}
                 </div>
+                )}
               </CardContent>
             </Card>
 
@@ -797,7 +894,13 @@ const Index = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
+                {pastMatches.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Icon name="FileX" size={48} className="mx-auto mb-3 opacity-50" />
+                    <p>Нет завершённых матчей</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
                   {pastMatches.map((match) => (
                     <div
                       key={match.id}
@@ -828,6 +931,7 @@ const Index = () => {
                     </div>
                   ))}
                 </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
