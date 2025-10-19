@@ -249,6 +249,33 @@ const Index = () => {
     setIsAddingMatch(false);
   };
 
+  const generateFullCalendar = () => {
+    const newMatches: Match[] = [];
+    const today = new Date();
+    let matchCounter = 0;
+
+    for (let i = 0; i < teams.length; i++) {
+      for (let j = i + 1; j < teams.length; j++) {
+        const matchDate = new Date(today);
+        matchDate.setDate(today.getDate() + matchCounter * 7);
+        
+        newMatches.push({
+          id: `${Date.now()}-${matchCounter}`,
+          date: matchDate.toISOString().split('T')[0],
+          homeTeam: teams[i].name,
+          awayTeam: teams[j].name,
+          homeScore: null,
+          awayScore: null,
+          status: 'scheduled'
+        });
+        
+        matchCounter++;
+      }
+    }
+
+    setMatches([...matches, ...newMatches]);
+  };
+
   const sortedTeams = [...teams].sort((a, b) => {
     if (b.points !== a.points) return b.points - a.points;
     const diffA = a.goalsFor - a.goalsAgainst;
@@ -812,6 +839,19 @@ const Index = () => {
           </TabsContent>
 
           <TabsContent value="calendar" className="animate-fade-in space-y-6">
+            {isAdmin && (
+            <div className="flex gap-2">
+              <Button 
+                variant="default" 
+                onClick={generateFullCalendar}
+                className="flex-1"
+              >
+                <Icon name="CalendarDays" size={16} className="mr-2" />
+                Создать календарь игр
+              </Button>
+            </div>
+            )}
+            
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
