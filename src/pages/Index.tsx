@@ -332,7 +332,7 @@ const Index = () => {
             <div className="relative h-full flex flex-col items-center justify-center text-center px-4">
               <div className="flex items-center gap-4 mb-3">
                 <Icon name="Trophy" size={56} className="text-white drop-shadow-lg" />
-                <h1 className="text-7xl font-black text-white tracking-wider drop-shadow-2xl">ЛДЛ</h1>
+                <h1 className="text-7xl font-black text-white tracking-wider drop-shadow-2xl">ЛЫЛ</h1>
                 <Icon name="Award" size={56} className="text-white drop-shadow-lg" />
               </div>
               <p className="text-white/90 text-2xl font-bold tracking-wide drop-shadow-lg">Любительская Дворовая Лига</p>
