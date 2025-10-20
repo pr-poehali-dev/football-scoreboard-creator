@@ -680,11 +680,11 @@ const Index = () => {
         <div className="mb-8 relative overflow-hidden rounded-2xl animate-slide-up shadow-2xl">
           <div className="relative h-64 bg-gradient-to-br from-primary via-accent to-primary shadow-inner">
             <img 
-              src="https://cdn.poehali.dev/projects/5af3188e-620b-4638-a258-d8bd1c941cff/files/ec79f03a-2fc9-48b4-8e52-a3fe4e639037.jpg" 
+              src="https://cdn.poehali.dev/projects/5af3188e-620b-4638-a258-d8bd1c941cff/files/14abd052-f7d1-457b-af9f-33e3df9779a3.jpg" 
               alt="ЛДЛ League Banner"
-              className="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-overlay"
+              className="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-overlay"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent" />
             <div className="relative h-full flex flex-col items-center justify-center text-center px-4">
               <div className="flex items-center gap-6 mb-4 animate-scale-in">
                 <div className="relative">
