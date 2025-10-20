@@ -162,8 +162,68 @@ const Index = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [password, setPassword] = useState('');
   const [showAdminLogin, setShowAdminLogin] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
 
   const adminPassword = 'admin123';
+  const API_URL = 'https://functions.poehali.dev/e72c0a94-78e5-4cc8-8bf5-30193a2cec40';
+
+  const fetchData = async () => {
+    try {
+      setIsSyncing(true);
+      const [teamsRes, matchesRes] = await Promise.all([
+        fetch(`${API_URL}?path=teams`),
+        fetch(`${API_URL}?path=matches`)
+      ]);
+      
+      if (teamsRes.ok && matchesRes.ok) {
+        const teamsData = await teamsRes.json();
+        const matchesData = await matchesRes.json();
+        
+        if (teamsData.teams) {
+          const formattedTeams = teamsData.teams.map((t: any) => ({
+            id: t.id,
+            name: t.name,
+            played: t.played || 0,
+            won: t.won || 0,
+            drawn: t.drawn || 0,
+            lost: t.lost || 0,
+            goalsFor: t.goals_for || 0,
+            goalsAgainst: t.goals_against || 0,
+            points: t.points || 0,
+            form: t.form ? JSON.parse(t.form) : [],
+            players: t.players || []
+          }));
+          setTeams(formattedTeams);
+        }
+        
+        if (matchesData.matches) {
+          const formattedMatches = matchesData.matches.map((m: any) => ({
+            id: m.id,
+            date: m.date,
+            homeTeam: m.home_team,
+            awayTeam: m.away_team,
+            homeScore: m.home_score,
+            awayScore: m.away_score,
+            status: m.status
+          }));
+          setMatches(formattedMatches);
+        }
+        
+        setLastSyncTime(new Date());
+      }
+    } catch (error) {
+      console.error('Ошибка загрузки данных:', error);
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+    const interval = setInterval(fetchData, 1500);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('footballTeams', JSON.stringify(teams));
@@ -193,21 +253,53 @@ const Index = () => {
     setEditingTeam(null);
   };
 
-  const updateTeamStats = (teamId: string, updates: Partial<Team>) => {
+  const updateTeamStats = async (teamId: string, updates: Partial<Team>) => {
     setTeams(teams.map(t => t.id === teamId ? {...t, ...updates} : t));
     setEditingTeam(null);
+    
+    const dbUpdates: any = {};
+    if (updates.goalsFor !== undefined) dbUpdates.goals_for = updates.goalsFor;
+    if (updates.goalsAgainst !== undefined) dbUpdates.goals_against = updates.goalsAgainst;
+    if (updates.played !== undefined) dbUpdates.played = updates.played;
+    if (updates.won !== undefined) dbUpdates.won = updates.won;
+    if (updates.drawn !== undefined) dbUpdates.drawn = updates.drawn;
+    if (updates.lost !== undefined) dbUpdates.lost = updates.lost;
+    if (updates.points !== undefined) dbUpdates.points = updates.points;
+    if (updates.form !== undefined) dbUpdates.form = JSON.stringify(updates.form);
+    
+    try {
+      await fetch(API_URL, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({action: 'update_team', team_id: teamId, updates: dbUpdates})
+      });
+      await fetchData();
+    } catch (error) {
+      console.error('Ошибка обновления команды:', error);
+    }
   };
 
-  const updatePlayer = (teamId: string, playerId: string, updates: Partial<Player>) => {
+  const updatePlayer = async (teamId: string, playerId: string, updates: Partial<Player>) => {
     setTeams(teams.map(t => 
       t.id === teamId 
         ? {...t, players: t.players.map(p => p.id === playerId ? {...p, ...updates} : p)}
         : t
     ));
     setEditingPlayer(null);
+    
+    try {
+      await fetch(API_URL, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({action: 'update_player', player_id: playerId, updates})
+      });
+      await fetchData();
+    } catch (error) {
+      console.error('Ошибка обновления игрока:', error);
+    }
   };
 
-  const addPlayer = (teamId: string) => {
+  const addPlayer = async (teamId: string) => {
     if (!newPlayerName || !newPlayerPosition) return;
     const newPlayer: Player = {
       id: Date.now().toString(),
@@ -222,13 +314,39 @@ const Index = () => {
     ));
     setNewPlayerName('');
     setNewPlayerPosition('');
+    
+    try {
+      await fetch(API_URL, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({action: 'add_player', player: {...newPlayer, team_id: teamId}})
+      });
+      await fetchData();
+    } catch (error) {
+      console.error('Ошибка добавления игрока:', error);
+    }
   };
 
-  const updateMatchScore = (matchId: string, homeScore: number, awayScore: number) => {
+  const updateMatchScore = async (matchId: string, homeScore: number, awayScore: number) => {
     setMatches(matches.map(m => 
       m.id === matchId ? {...m, homeScore, awayScore, status: 'finished' as const} : m
     ));
     setEditingMatch(null);
+    
+    try {
+      await fetch(API_URL, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          action: 'update_match',
+          match_id: matchId,
+          updates: {homeScore, awayScore, status: 'finished'}
+        })
+      });
+      await fetchData();
+    } catch (error) {
+      console.error('Ошибка обновления матча:', error);
+    }
   };
 
   const addMatch = () => {
@@ -278,7 +396,23 @@ const Index = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-primary/5 via-transparent to-accent/5"></div>
       </div>
       <div className="container mx-auto px-4 py-8 relative z-10">
-        <div className="flex justify-end mb-4">
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex items-center gap-2">
+            {isSyncing ? (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <div className="animate-spin">
+                  <Icon name="RefreshCw" size={16} />
+                </div>
+                <span>Синхронизация...</span>
+              </div>
+            ) : lastSyncTime ? (
+              <div className="flex items-center gap-2 text-sm text-green-500">
+                <Icon name="CheckCircle2" size={16} />
+                <span>Синхронизировано {lastSyncTime.toLocaleTimeString('ru-RU')}</span>
+              </div>
+            ) : null}
+          </div>
+          <div>
           {!isAdmin ? (
             <Dialog open={showAdminLogin} onOpenChange={setShowAdminLogin}>
               <DialogTrigger asChild>
@@ -321,6 +455,7 @@ const Index = () => {
               Выйти из редактирования
             </Button>
           )}
+          </div>
         </div>
         <div className="mb-8 relative overflow-hidden rounded-2xl animate-slide-up shadow-2xl">
           <div className="relative h-64 bg-gradient-to-br from-primary via-accent to-primary shadow-inner">
