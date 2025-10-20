@@ -3,21 +3,30 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>ЛФЛ ВОРОНЕЖ - Любительская Футбольная Лига Воронежа</title>
-    <meta name="description" content="ЛФЛ ВОРОНЕЖ - Любительская Футбольная Лига. Турнирная таблица, календарь матчей, составы команд и статистика игроков сезона 2025/2026"/>
-    <meta name="keywords" content="ЛФЛ ВОРОНЕЖ, любительская футбольная лига, футбол воронеж, турнирная таблица, календарь матчей, составы команд"/>
-    <meta name="author" content="ЛФЛ ВОРОНЕЖ"/>
+    <title>ЛДЛ ВОРОНЕЖ - Любительская Дворовая Лига</title>
+    <meta name="description" content="ЛДЛ ВОРОНЕЖ - Любительская Дворовая Лига. Турнирная таблица, календарь матчей, составы команд и статистика игроков сезона 2025/2026"/>
+    <meta name="keywords" content="ЛДЛ ВОРОНЕЖ, любительская дворовая лига, футбол воронеж, турнирная таблица, календарь матчей, составы команд"/>
+    <meta name="author" content="ЛДЛ ВОРОНЕЖ"/>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    <meta property="og:title" content="ЛФЛ ВОРОНЕЖ - Любительская Футбольная Лига">
-    <meta property="og:description" content="Турнирная таблица, календарь матчей и составы команд ЛФЛ ВОРОНЕЖ. Сезон 2025/2026">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ЛДЛ Воронеж">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="https://cdn.poehali.dev/projects/5af3188e-620b-4638-a258-d8bd1c941cff/files/c1b59336-5fe1-45e0-941a-cdf7e5ded768.jpg">
+    <meta name="theme-color" content="#22c55e">
+    <meta property="og:title" content="ЛДЛ ВОРОНЕЖ - Любительская Дворовая Лига">
+    <meta property="og:description" content="Турнирная таблица, календарь матчей и составы команд ЛДЛ ВОРОНЕЖ. Сезон 2025/2026">
     <meta property="og:type" content="website">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="ЛФЛ ВОРОНЕЖ - Любительская Футбольная Лига">
+    <meta property="og:image:alt" content="ЛДЛ ВОРОНЕЖ - Любительская Дворовая Лига">
     <meta property="og:image" content="https://cdn.poehali.dev/projects/5af3188e-620b-4638-a258-d8bd1c941cff/files/ec79f03a-2fc9-48b4-8e52-a3fe4e639037.jpg">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="ЛФЛ ВОРОНЕЖ">
-    <meta name="twitter:description" content="Любительская Футбольная Лига Воронежа - турнирная таблица, матчи, составы">
+    <meta name="twitter:title" content="ЛДЛ ВОРОНЕЖ">
+    <meta name="twitter:description" content="Любительская Дворовая Лига Воронежа - турнирная таблица, матчи, составы">
     <meta name="twitter:image" content="https://cdn.poehali.dev/projects/5af3188e-620b-4638-a258-d8bd1c941cff/files/ec79f03a-2fc9-48b4-8e52-a3fe4e639037.jpg">
 
     <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS COMMENT! -->
@@ -35,8 +44,8 @@
       {
         "@context": "https://schema.org",
         "@type": "SportsOrganization",
-        "name": "ЛФЛ ВОРОНЕЖ",
-        "description": "Любительская Футбольная Лига Воронежа",
+        "name": "ЛДЛ ВОРОНЕЖ",
+        "description": "Любительская Дворовая Лига Воронежа",
         "sport": "Футбол",
         "address": {
           "@type": "PostalAddress",
@@ -50,6 +59,7 @@
 <body>
 <div id="root"></div>
 <script type="module" src="/src/main.tsx"></script>
+<script src="/register-sw.js"></script>
 
 <!-- Yandex.Metrika counter -->
 <script type="text/javascript">

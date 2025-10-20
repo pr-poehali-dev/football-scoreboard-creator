@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import InstallButton from '@/components/InstallButton';
 
 interface Player {
   id: string;
@@ -441,7 +442,7 @@ const Index = () => {
       </div>
       <div className="container mx-auto px-4 py-8 relative z-10">
         <div className="flex justify-between items-center mb-4">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             {isSyncing ? (
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <div className="animate-spin">
@@ -455,6 +456,7 @@ const Index = () => {
                 <span>Синхронизировано {lastSyncTime.toLocaleTimeString('ru-RU')}</span>
               </div>
             ) : null}
+            <InstallButton />
           </div>
           <div>
           {!isAdmin ? (
