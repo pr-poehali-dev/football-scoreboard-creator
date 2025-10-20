@@ -678,39 +678,53 @@ const Index = () => {
           </div>
         </div>
         <div className="mb-8 relative overflow-hidden rounded-2xl animate-slide-up shadow-2xl">
-          <div className="relative h-64 bg-gradient-to-br from-primary via-accent to-primary shadow-inner">
+          <div className="relative h-64 bg-gradient-to-br from-primary via-accent to-primary shadow-inner overflow-hidden">
             <img 
               src="https://cdn.poehali.dev/projects/5af3188e-620b-4638-a258-d8bd1c941cff/files/14abd052-f7d1-457b-af9f-33e3df9779a3.jpg" 
               alt="ЛДЛ League Banner"
               className="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-overlay"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent" />
+            <div className="absolute inset-0 animate-shimmer opacity-30" />
+            {[...Array(8)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute w-2 h-2 bg-accent rounded-full animate-star-pulse"
+                style={{
+                  top: `${Math.random() * 100}%`,
+                  left: `${Math.random() * 100}%`,
+                  animationDelay: `${i * 0.3}s`
+                }}
+              />
+            ))}
             <div className="relative h-full flex flex-col items-center justify-center text-center px-4">
               <div className="flex items-center gap-6 mb-4 animate-scale-in">
-                <div className="relative">
-                  <Icon name="Trophy" size={70} className="text-accent drop-shadow-2xl animate-pulse" />
+                <div className="relative animate-slide-in-left">
+                  <Icon name="Trophy" size={70} className="text-accent drop-shadow-2xl animate-bounce-soft" />
                   <div className="absolute -top-1 -right-1 w-4 h-4 bg-accent rounded-full animate-ping"></div>
+                  <div className="absolute inset-0 animate-glow rounded-full"></div>
                 </div>
                 <div className="flex flex-col">
-                  <h1 className="text-8xl font-black text-white tracking-widest drop-shadow-2xl" style={{textShadow: '0 0 30px rgba(234, 179, 8, 0.5), 4px 4px 8px rgba(0,0,0,0.8)'}}>
+                  <h1 className="text-8xl font-black text-white tracking-widest drop-shadow-2xl animate-glow" style={{textShadow: '0 0 30px rgba(234, 179, 8, 0.5), 4px 4px 8px rgba(0,0,0,0.8)'}}>
                     ЛДЛ
                   </h1>
-                  <div className="text-5xl font-black text-accent tracking-wider drop-shadow-xl mt-1">
+                  <div className="text-5xl font-black text-accent tracking-wider drop-shadow-xl mt-1 animate-shimmer">
                     ВОРОНЕЖ
                   </div>
                 </div>
-                <div className="relative">
-                  <Icon name="Award" size={70} className="text-accent drop-shadow-2xl animate-pulse" />
+                <div className="relative animate-slide-in-right">
+                  <Icon name="Award" size={70} className="text-accent drop-shadow-2xl animate-bounce-soft" />
                   <div className="absolute -top-1 -right-1 w-4 h-4 bg-accent rounded-full animate-ping"></div>
+                  <div className="absolute inset-0 animate-glow rounded-full"></div>
                 </div>
               </div>
               <div className="flex items-center gap-2 mb-2">
-                <div className="h-1 w-16 bg-accent rounded-full"></div>
-                <p className="text-white/95 text-3xl font-bold tracking-wide drop-shadow-lg">Любительская Дворовая Лига</p>
-                <div className="h-1 w-16 bg-accent rounded-full"></div>
+                <div className="h-1 w-16 bg-accent rounded-full animate-pulse"></div>
+                <p className="text-white/95 text-3xl font-bold tracking-wide drop-shadow-lg animate-fade-in">Любительская Дворовая Лига</p>
+                <div className="h-1 w-16 bg-accent rounded-full animate-pulse"></div>
               </div>
               <div className="flex items-center gap-3 mt-3">
-                <div className="px-4 py-1 bg-accent/20 backdrop-blur-sm border-2 border-accent rounded-full">
+                <div className="px-4 py-1 bg-accent/20 backdrop-blur-sm border-2 border-accent rounded-full animate-glow">
                   <p className="text-accent text-xl font-black drop-shadow-md">⚽ СЕЗОН 2025/2026 ⚽</p>
                 </div>
               </div>
@@ -798,15 +812,16 @@ const Index = () => {
                     {sortedTeams.map((team, index) => (
                       <TableRow
                         key={team.id}
-                        className="hover:bg-primary/10 transition-all duration-300 border-b border-primary/5 hover:scale-[1.01]"
+                        className="hover:bg-primary/10 transition-all duration-500 border-b border-primary/5 hover:scale-[1.02] animate-slide-up hover:shadow-lg hover:shadow-accent/20"
+                        style={{animationDelay: `${index * 0.05}s`}}
                       >
                         <TableCell className="text-center font-bold text-sm">
                           <div className={`inline-flex items-center justify-center w-8 h-8 rounded-full ${
-                            index === 0 ? 'bg-accent text-background' :
-                            index === 1 ? 'bg-primary/80 text-white' :
-                            index === 2 ? 'bg-secondary/80 text-white' :
+                            index === 0 ? 'bg-accent text-background animate-glow' :
+                            index === 1 ? 'bg-primary/80 text-white animate-pulse' :
+                            index === 2 ? 'bg-secondary/80 text-white animate-pulse' :
                             'bg-muted text-muted-foreground'
-                          } font-bold`}>
+                          } font-bold transition-all duration-300 hover:scale-125`}>
                             {index + 1}
                           </div>
                         </TableCell>
@@ -816,10 +831,10 @@ const Index = () => {
                               <img 
                                 src={team.logoUrl} 
                                 alt={team.name}
-                                className="w-10 h-10 rounded-full object-cover border-2 border-primary/20"
+                                className="w-10 h-10 rounded-full object-cover border-2 border-primary/20 hover:scale-110 hover:border-accent transition-all duration-300"
                               />
                             ) : (
-                              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center hover:scale-110 transition-transform duration-300 animate-shimmer">
                                 <Icon name="Shield" size={20} className="text-white" />
                               </div>
                             )}
@@ -895,7 +910,7 @@ const Index = () => {
                           {team.goalsFor - team.goalsAgainst}
                         </TableCell>
                         <TableCell className="text-center">
-                          <span className="inline-flex items-center justify-center bg-gradient-to-br from-primary to-accent text-white font-black text-2xl px-4 py-1 rounded-lg shadow-md score-text">
+                          <span className="inline-flex items-center justify-center bg-gradient-to-br from-primary to-accent text-white font-black text-2xl px-4 py-1 rounded-lg shadow-md score-text animate-glow hover:scale-110 transition-transform duration-300">
                             {team.points}
                           </span>
                         </TableCell>
