@@ -443,19 +443,6 @@ const Index = () => {
       <div className="container mx-auto px-4 py-8 relative z-10">
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-3">
-            {isSyncing ? (
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <div className="animate-spin">
-                  <Icon name="RefreshCw" size={16} />
-                </div>
-                <span>Синхронизация...</span>
-              </div>
-            ) : lastSyncTime ? (
-              <div className="flex items-center gap-2 text-sm text-green-500">
-                <Icon name="CheckCircle2" size={16} />
-                <span>Синхронизировано {lastSyncTime.toLocaleTimeString('ru-RU')}</span>
-              </div>
-            ) : null}
             <InstallButton />
           </div>
           <div>
