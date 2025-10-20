@@ -44,6 +44,7 @@ interface Team {
   points: number;
   form: ('W' | 'D' | 'L')[];
   players: Player[];
+  logoUrl?: string;
 }
 
 interface Match {
@@ -164,6 +165,8 @@ const Index = () => {
   const [showAdminLogin, setShowAdminLogin] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
+  const [editingLogo, setEditingLogo] = useState<{teamId: string, currentUrl?: string} | null>(null);
+  const [newLogoUrl, setNewLogoUrl] = useState('');
 
   const adminPassword = 'admin123';
   const API_URL = 'https://functions.poehali.dev/e72c0a94-78e5-4cc8-8bf5-30193a2cec40';
@@ -192,7 +195,8 @@ const Index = () => {
             goalsAgainst: t.goals_against || 0,
             points: t.points || 0,
             form: t.form ? JSON.parse(t.form) : [],
-            players: t.players || []
+            players: t.players || [],
+            logoUrl: t.logo_url
           }));
           setTeams(formattedTeams);
         }
@@ -251,6 +255,23 @@ const Index = () => {
       awayTeam: m.awayTeam === teams.find(t => t.id === teamId)?.name ? newName : m.awayTeam
     })));
     setEditingTeam(null);
+  };
+
+  const updateTeamLogo = async (teamId: string, logoUrl: string) => {
+    setTeams(teams.map(t => t.id === teamId ? {...t, logoUrl} : t));
+    setEditingLogo(null);
+    setNewLogoUrl('');
+    
+    try {
+      await fetch(API_URL, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({action: 'update_team', team_id: teamId, updates: {logo_url: logoUrl}})
+      });
+      await fetchData();
+    } catch (error) {
+      console.error('Ошибка обновления логотипа:', error);
+    }
   };
 
   const updateTeamStats = async (teamId: string, updates: Partial<Team>) => {
@@ -537,15 +558,27 @@ const Index = () => {
                           </div>
                         </TableCell>
                         <TableCell className="font-semibold text-xs">
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <button 
-                                className="text-left hover:text-primary hover:underline transition-colors cursor-pointer"
-                                onClick={() => setSelectedTeam(team)}
-                              >
-                                {team.name}
-                              </button>
-                            </DialogTrigger>
+                          <div className="flex items-center gap-3">
+                            {team.logoUrl ? (
+                              <img 
+                                src={team.logoUrl} 
+                                alt={team.name}
+                                className="w-10 h-10 rounded-full object-cover border-2 border-primary/20"
+                              />
+                            ) : (
+                              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                                <Icon name="Shield" size={20} className="text-white" />
+                              </div>
+                            )}
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <button 
+                                  className="text-left hover:text-primary hover:underline transition-colors cursor-pointer"
+                                  onClick={() => setSelectedTeam(team)}
+                                >
+                                  {team.name}
+                                </button>
+                              </DialogTrigger>
                             <DialogContent className="max-w-2xl">
                               <DialogHeader>
                                 <DialogTitle className="flex items-center gap-2">
@@ -629,6 +662,62 @@ const Index = () => {
                         <TableCell>
                           <div className="flex gap-2">
                             {isAdmin && (
+                            <>
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => {
+                                    setEditingLogo({teamId: team.id, currentUrl: team.logoUrl});
+                                    setNewLogoUrl(team.logoUrl || '');
+                                  }}
+                                >
+                                  <Icon name="Image" size={16} />
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle className="flex items-center gap-2">
+                                    <Icon name="Image" size={24} className="text-primary" />
+                                    Логотип команды {team.name}
+                                  </DialogTitle>
+                                  <DialogDescription>
+                                    Добавьте URL изображения для логотипа команды
+                                  </DialogDescription>
+                                </DialogHeader>
+                                <div className="space-y-4 py-4">
+                                  {newLogoUrl && (
+                                    <div className="flex justify-center">
+                                      <img 
+                                        src={newLogoUrl} 
+                                        alt="Предпросмотр"
+                                        className="w-32 h-32 rounded-full object-cover border-4 border-primary/20"
+                                        onError={(e) => {
+                                          e.currentTarget.src = '';
+                                          e.currentTarget.style.display = 'none';
+                                        }}
+                                      />
+                                    </div>
+                                  )}
+                                  <div className="space-y-2">
+                                    <Label>URL логотипа</Label>
+                                    <Input
+                                      placeholder="https://example.com/logo.png"
+                                      value={newLogoUrl}
+                                      onChange={(e) => setNewLogoUrl(e.target.value)}
+                                    />
+                                  </div>
+                                  <Button
+                                    onClick={() => updateTeamLogo(team.id, newLogoUrl)}
+                                    className="w-full"
+                                  >
+                                    <Icon name="Save" size={16} className="mr-2" />
+                                    Сохранить логотип
+                                  </Button>
+                                </div>
+                              </DialogContent>
+                            </Dialog>
                             <Dialog>
                               <DialogTrigger asChild>
                                 <Button
@@ -680,8 +769,6 @@ const Index = () => {
                               </div>
                             </DialogContent>
                             </Dialog>
-                            )}
-                            {isAdmin && (
                             <Dialog open={editingTeam?.id === team.id} onOpenChange={(open) => !open && setEditingTeam(null)}>
                               <DialogTrigger asChild>
                                 <Button
@@ -798,6 +885,7 @@ const Index = () => {
                                 </div>
                               </DialogContent>
                             </Dialog>
+                            </>
                             )}
                           </div>
                         </TableCell>
@@ -1100,14 +1188,32 @@ const Index = () => {
                           })}
                         </div>
                         <div className="flex items-center gap-3 flex-1 justify-between">
-                          <div className="font-bold text-right flex-1">
-                            {match.homeTeam}
+                          <div className="flex items-center gap-2 flex-1 justify-end">
+                            <div className="font-bold text-right">
+                              {match.homeTeam}
+                            </div>
+                            {teams.find(t => t.name === match.homeTeam)?.logoUrl && (
+                              <img 
+                                src={teams.find(t => t.name === match.homeTeam)?.logoUrl} 
+                                alt={match.homeTeam}
+                                className="w-8 h-8 rounded-full object-cover border-2 border-primary/20"
+                              />
+                            )}
                           </div>
-                          <Badge variant="outline" className="px-3">
+                          <Badge variant="outline" className="px-3 mx-2">
                             VS
                           </Badge>
-                          <div className="font-bold text-left flex-1">
-                            {match.awayTeam}
+                          <div className="flex items-center gap-2 flex-1">
+                            {teams.find(t => t.name === match.awayTeam)?.logoUrl && (
+                              <img 
+                                src={teams.find(t => t.name === match.awayTeam)?.logoUrl} 
+                                alt={match.awayTeam}
+                                className="w-8 h-8 rounded-full object-cover border-2 border-primary/20"
+                              />
+                            )}
+                            <div className="font-bold text-left">
+                              {match.awayTeam}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -1198,17 +1304,35 @@ const Index = () => {
                           })}
                         </div>
                         <div className="flex items-center gap-3 flex-1 justify-between">
-                          <div className="font-bold text-right flex-1">
-                            {match.homeTeam}
+                          <div className="flex items-center gap-2 flex-1 justify-end">
+                            <div className="font-bold text-right">
+                              {match.homeTeam}
+                            </div>
+                            {teams.find(t => t.name === match.homeTeam)?.logoUrl && (
+                              <img 
+                                src={teams.find(t => t.name === match.homeTeam)?.logoUrl} 
+                                alt={match.homeTeam}
+                                className="w-8 h-8 rounded-full object-cover border-2 border-primary/20"
+                              />
+                            )}
                           </div>
                           <Badge
                             variant="secondary"
-                            className="px-4 py-1 text-base font-black"
+                            className="px-4 py-1 text-base font-black mx-2"
                           >
                             {match.homeScore} : {match.awayScore}
                           </Badge>
-                          <div className="font-bold text-left flex-1">
-                            {match.awayTeam}
+                          <div className="flex items-center gap-2 flex-1">
+                            {teams.find(t => t.name === match.awayTeam)?.logoUrl && (
+                              <img 
+                                src={teams.find(t => t.name === match.awayTeam)?.logoUrl} 
+                                alt={match.awayTeam}
+                                className="w-8 h-8 rounded-full object-cover border-2 border-primary/20"
+                              />
+                            )}
+                            <div className="font-bold text-left">
+                              {match.awayTeam}
+                            </div>
                           </div>
                         </div>
                       </div>
