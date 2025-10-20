@@ -550,7 +550,7 @@ const Index = () => {
           <TabsContent value="standings" className="animate-slide-up">
             <Card className="border-2 border-primary/20 shadow-xl shadow-primary/10 backdrop-blur-sm bg-card/95">
               <CardHeader className="bg-gradient-to-r from-primary/10 to-accent/10 border-b border-primary/20">
-                <CardTitle className="flex items-center gap-3 text-2xl">
+                <CardTitle className="flex items-center gap-3 text-3xl football-text">
                   <Icon name="Trophy" size={28} className="text-accent animate-pulse" />
                   Турнирная таблица
                   <Icon name="Medal" size={24} className="text-primary ml-auto" />
@@ -606,7 +606,7 @@ const Index = () => {
                             <Dialog>
                               <DialogTrigger asChild>
                                 <button 
-                                  className="text-left hover:text-primary hover:underline transition-colors cursor-pointer"
+                                  className="text-left hover:text-primary hover:underline transition-colors cursor-pointer football-text text-lg"
                                   onClick={() => setSelectedTeam(team)}
                                 >
                                   {team.name}
@@ -674,7 +674,7 @@ const Index = () => {
                           {team.goalsFor - team.goalsAgainst}
                         </TableCell>
                         <TableCell className="text-center">
-                          <span className="inline-flex items-center justify-center bg-gradient-to-br from-primary to-accent text-white font-black text-lg px-3 py-1 rounded-lg shadow-md">
+                          <span className="inline-flex items-center justify-center bg-gradient-to-br from-primary to-accent text-white font-black text-2xl px-4 py-1 rounded-lg shadow-md score-text">
                             {team.points}
                           </span>
                         </TableCell>
@@ -1223,7 +1223,7 @@ const Index = () => {
                         </div>
                         <div className="flex items-center gap-3 flex-1 justify-between">
                           <div className="flex items-center gap-2 flex-1 justify-end">
-                            <div className="font-bold text-right">
+                            <div className="font-bold text-right football-text text-lg">
                               {match.homeTeam}
                             </div>
                             {teams.find(t => t.name === match.homeTeam)?.logoUrl && (
@@ -1245,7 +1245,7 @@ const Index = () => {
                                 className="w-8 h-8 rounded-full object-cover border-2 border-primary/20"
                               />
                             )}
-                            <div className="font-bold text-left">
+                            <div className="font-bold text-left football-text text-lg">
                               {match.awayTeam}
                             </div>
                           </div>
@@ -1339,7 +1339,7 @@ const Index = () => {
                         </div>
                         <div className="flex items-center gap-3 flex-1 justify-between">
                           <div className="flex items-center gap-2 flex-1 justify-end">
-                            <div className="font-bold text-right">
+                            <div className="font-bold text-right football-text text-lg">
                               {match.homeTeam}
                             </div>
                             {teams.find(t => t.name === match.homeTeam)?.logoUrl && (
@@ -1352,7 +1352,7 @@ const Index = () => {
                           </div>
                           <Badge
                             variant="secondary"
-                            className="px-4 py-1 text-base font-black mx-2"
+                            className="px-5 py-2 text-xl font-black mx-2 score-text"
                           >
                             {match.homeScore} : {match.awayScore}
                           </Badge>
@@ -1364,7 +1364,7 @@ const Index = () => {
                                 className="w-8 h-8 rounded-full object-cover border-2 border-primary/20"
                               />
                             )}
-                            <div className="font-bold text-left">
+                            <div className="font-bold text-left football-text text-lg">
                               {match.awayTeam}
                             </div>
                           </div>
