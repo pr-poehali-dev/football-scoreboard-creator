@@ -622,6 +622,7 @@ const Index = () => {
                               </div>
                             </DialogContent>
                           </Dialog>
+                          </div>
                         </TableCell>
                         <TableCell className="text-center text-xs">{team.played}</TableCell>
                         <TableCell className="text-center text-green-600 font-semibold text-xs">
