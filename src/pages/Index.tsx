@@ -285,6 +285,8 @@ const Index = () => {
   const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
   const [editingLogo, setEditingLogo] = useState<{teamId: string, currentUrl?: string} | null>(null);
   const [newLogoUrl, setNewLogoUrl] = useState('');
+  const [isAddingTeam, setIsAddingTeam] = useState(false);
+  const [newTeamDialog, setNewTeamDialog] = useState(false);
 
   const adminPassword = 'admin123';
   const API_URL = 'https://functions.poehali.dev/e72c0a94-78e5-4cc8-8bf5-30193a2cec40';
@@ -362,6 +364,74 @@ const Index = () => {
       setPassword('');
     } else {
       alert('Неверный пароль!');
+    }
+  };
+
+  const handleAddTeam = async () => {
+    if (!newTeamName.trim()) return;
+
+    const newTeam: Team = {
+      id: Date.now().toString(),
+      name: newTeamName.trim(),
+      played: 0,
+      won: 0,
+      drawn: 0,
+      lost: 0,
+      goalsFor: 0,
+      goalsAgainst: 0,
+      points: 0,
+      form: [],
+      players: [],
+    };
+
+    setTeams([...teams, newTeam]);
+    setNewTeamName('');
+    setNewTeamDialog(false);
+
+    try {
+      await fetch(API_URL, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          action: 'create_team',
+          team: {
+            id: newTeam.id,
+            name: newTeam.name,
+            played: 0,
+            won: 0,
+            drawn: 0,
+            lost: 0,
+            goals_for: 0,
+            goals_against: 0,
+            points: 0,
+            form: '[]',
+            players: [],
+          }
+        })
+      });
+      await fetchData();
+    } catch (error) {
+      console.error('Ошибка добавления команды:', error);
+    }
+  };
+
+  const handleDeleteTeam = async (teamId: string) => {
+    if (!confirm('Вы уверены, что хотите удалить эту команду? Это действие нельзя отменить.')) {
+      return;
+    }
+
+    setTeams(teams.filter(t => t.id !== teamId));
+    setMatches(matches.filter(m => m.homeTeam !== teamId && m.awayTeam !== teamId));
+
+    try {
+      await fetch(API_URL, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({action: 'delete_team', team_id: teamId})
+      });
+      await fetchData();
+    } catch (error) {
+      console.error('Ошибка удаления команды:', error);
     }
   };
 
@@ -670,7 +740,40 @@ const Index = () => {
                 <CardTitle className="flex items-center gap-3 text-3xl football-text">
                   <Icon name="Trophy" size={28} className="text-accent animate-pulse" />
                   Турнирная таблица
-                  <Icon name="Medal" size={24} className="text-primary ml-auto" />
+                  {isAdmin && (
+                    <Dialog open={newTeamDialog} onOpenChange={setNewTeamDialog}>
+                      <DialogTrigger asChild>
+                        <Button size="sm" className="ml-auto">
+                          <Icon name="Plus" size={16} className="mr-2" />
+                          Добавить команду
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Добавить новую команду</DialogTitle>
+                          <DialogDescription>
+                            Введите название новой команды для добавления в турнир
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4 py-4">
+                          <div className="space-y-2">
+                            <Label>Название команды</Label>
+                            <Input
+                              value={newTeamName}
+                              onChange={(e) => setNewTeamName(e.target.value)}
+                              onKeyPress={(e) => e.key === 'Enter' && handleAddTeam()}
+                              placeholder="ФК Новая команда"
+                            />
+                          </div>
+                          <Button onClick={handleAddTeam} className="w-full" disabled={!newTeamName.trim()}>
+                            <Icon name="Plus" size={16} className="mr-2" />
+                            Добавить команду
+                          </Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  )}
+                  {!isAdmin && <Icon name="Medal" size={24} className="text-primary ml-auto" />}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -750,6 +853,7 @@ const Index = () => {
                                         <TableHead className="text-center">Голы</TableHead>
                                         <TableHead className="text-center">Пасы</TableHead>
                                         <TableHead className="text-center">Матчи</TableHead>
+                                        {isAdmin && <TableHead className="w-12"></TableHead>}
                                       </TableRow>
                                     </TableHeader>
                                     <TableBody>
@@ -869,6 +973,16 @@ const Index = () => {
                                 </div>
                               </DialogContent>
                             </Dialog>
+                            {isAdmin && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDeleteTeam(team.id)}
+                                className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                              >
+                                <Icon name="Trash2" size={16} />
+                              </Button>
+                            )}
                             <Dialog>
                               <DialogTrigger asChild>
                                 <Button
