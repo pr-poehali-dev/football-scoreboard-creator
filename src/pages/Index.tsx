@@ -247,14 +247,26 @@ const Index = () => {
     }
   };
 
-  const updateTeamName = (teamId: string, newName: string) => {
+  const updateTeamName = async (teamId: string, newName: string) => {
+    const oldName = teams.find(t => t.id === teamId)?.name;
     setTeams(teams.map(t => t.id === teamId ? {...t, name: newName} : t));
     setMatches(matches.map(m => ({
       ...m,
-      homeTeam: m.homeTeam === teams.find(t => t.id === teamId)?.name ? newName : m.homeTeam,
-      awayTeam: m.awayTeam === teams.find(t => t.id === teamId)?.name ? newName : m.awayTeam
+      homeTeam: m.homeTeam === oldName ? newName : m.homeTeam,
+      awayTeam: m.awayTeam === oldName ? newName : m.awayTeam
     })));
     setEditingTeam(null);
+    
+    try {
+      await fetch(API_URL, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({action: 'update_team', team_id: teamId, updates: {name: newName}})
+      });
+      await fetchData();
+    } catch (error) {
+      console.error('Ошибка обновления названия команды:', error);
+    }
   };
 
   const updateTeamLogo = async (teamId: string, logoUrl: string) => {
@@ -370,7 +382,7 @@ const Index = () => {
     }
   };
 
-  const addMatch = () => {
+  const addMatch = async () => {
     if (!newMatchHomeTeam || !newMatchAwayTeam || !newMatchDate) return;
     const newMatch: Match = {
       id: Date.now().toString(),
@@ -386,6 +398,17 @@ const Index = () => {
     setNewMatchAwayTeam('');
     setNewMatchDate('');
     setIsAddingMatch(false);
+    
+    try {
+      await fetch(API_URL, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({action: 'add_match', match: newMatch})
+      });
+      await fetchData();
+    } catch (error) {
+      console.error('Ошибка добавления матча:', error);
+    }
   };
 
   const sortedTeams = [...teams].sort((a, b) => {
@@ -487,13 +510,34 @@ const Index = () => {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
             <div className="relative h-full flex flex-col items-center justify-center text-center px-4">
-              <div className="flex items-center gap-4 mb-3 animate-scale-in">
-                <Icon name="Trophy" size={60} className="text-accent drop-shadow-2xl animate-pulse" />
-                <h1 className="text-7xl font-black text-white tracking-wider drop-shadow-2xl">ЛФЛ ВОРОНЕЖ</h1>
-                <Icon name="Award" size={60} className="text-accent drop-shadow-2xl animate-pulse" />
+              <div className="flex items-center gap-6 mb-4 animate-scale-in">
+                <div className="relative">
+                  <Icon name="Trophy" size={70} className="text-accent drop-shadow-2xl animate-pulse" />
+                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-accent rounded-full animate-ping"></div>
+                </div>
+                <div className="flex flex-col">
+                  <h1 className="text-8xl font-black text-white tracking-widest drop-shadow-2xl" style={{textShadow: '0 0 30px rgba(234, 179, 8, 0.5), 4px 4px 8px rgba(0,0,0,0.8)'}}>
+                    ЛДЛ
+                  </h1>
+                  <div className="text-5xl font-black text-accent tracking-wider drop-shadow-xl mt-1">
+                    ВОРОНЕЖ
+                  </div>
+                </div>
+                <div className="relative">
+                  <Icon name="Award" size={70} className="text-accent drop-shadow-2xl animate-pulse" />
+                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-accent rounded-full animate-ping"></div>
+                </div>
               </div>
-              <p className="text-white/95 text-3xl font-bold tracking-wide drop-shadow-lg">Любительская Футбольная Лига</p>
-              <p className="text-accent text-xl mt-2 font-semibold drop-shadow-md">⚽ Сезон 2025/2026 ⚽</p>
+              <div className="flex items-center gap-2 mb-2">
+                <div className="h-1 w-16 bg-accent rounded-full"></div>
+                <p className="text-white/95 text-3xl font-bold tracking-wide drop-shadow-lg">Любительская Дворовая Лига</p>
+                <div className="h-1 w-16 bg-accent rounded-full"></div>
+              </div>
+              <div className="flex items-center gap-3 mt-3">
+                <div className="px-4 py-1 bg-accent/20 backdrop-blur-sm border-2 border-accent rounded-full">
+                  <p className="text-accent text-xl font-black drop-shadow-md">⚽ СЕЗОН 2025/2026 ⚽</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
